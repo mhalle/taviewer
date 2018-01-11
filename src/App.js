@@ -3,69 +3,108 @@ import './App.css';
 import _ from 'lodash';
 import prefix_match from './prefix-match';
 import ta98_json from './human.json';
-
+import createHistory from 'history/createBrowserHistory';
 import { Tree, AutoComplete } from 'antd';
+import NodeIndex from './NodeIndex';
+import queryString from 'query-string';
 const TreeNode = Tree.TreeNode;
 const Option = AutoComplete.Option;
 
-
-function index_tree(node_list, index) {
-  index = index || {};
-  _.forEach(node_list, node => {
-    index[node[0]] = node;
-    index_tree(node[5], index);
-  });
-  return index;
-}
-
 function WikipediaLink(title, target) {
-  if(!title) {
+  if (!title) {
     return null;
   }
   let underscored = title.replace(' ', '_');
-  let link =  `https://en.wikipedia.org/wiki/${underscored}`;
-  if(target){
+  let link = `https://en.wikipedia.org/wiki/${underscored}`;
+  if (target) {
     return <a href={link} target={target}>{title}</a>;
-  } 
+  }
   return <a href={link}>{title}</a>;
 }
 
 function TAViewerDetailRow(props) {
-    let label = props.label;
-    let value = props.value;
+  let label = props.label;
+  let value = props.value;
 
-    if(value === null || (_.isArray(value) && value.length === 0)) {
-      return <div></div>;
-    }
-    if(_.isArray(value)) {
-      return (
-        <div className="taviewer-detail-row">
-        <div className="taviewer-detail-key">{label}:</div>
-        <div className="taviewer-detail-value">
-          { value.map(x =><div>{x}</div>) }
-        </div>
-        </div>
-      )
-    }
+  if (value === null || (_.isArray(value) && value.length === 0)) {
+    return <div></div>;
+  }
+  if (_.isArray(value)) {
     return (
       <div className="taviewer-detail-row">
+        <div className="taviewer-detail-key">{label}:</div>
+        <div className="taviewer-detail-value">
+          {value.map(x => <div key={x}>{x}</div>)}
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="taviewer-detail-row">
       <div className="taviewer-detail-key">{label}:</div>
       <div className="taviewer-detail-value">
         {value}
       </div>
-      </div>
-    )
+    </div>
+  )
 }
+
+
+
 class App extends Component {
   state = {
-    selectExpandNode: null
+    selectExpandNode: null,
+    history: null,
+    unlisten: null,
+    nodeIndex: null
   };
 
   selectExpandNode = n => {
     let selectExpandNode = n;
     this.setState({ selectExpandNode });
+    if (n) {
+      this.state.history.push(`/?id=${n[0]}`);
+    }
+    else {
+      this.state.history.push('/');
+    }
   }
 
+  handleHistory = (location, action) => {
+    if (action === 'POP' || action === 'X-INIT') {
+      const query = queryString.parse(location.search);
+      let selectedNode = null;
+      if (query.id && this.state.nodeIndex.get_node_by_id(query.id)) {
+        selectedNode = this.state.nodeIndex.get_node_by_id(query.id);
+      }
+      this.setState({
+        selectExpandNode: selectedNode
+      });
+    }
+  }
+
+  componentDidMount() {
+    this.handleHistory(this.state.history.location, 'X-INIT');
+  }
+  componentWillMount() {
+    const history = createHistory();
+    const nodeIndex = new NodeIndex(ta98_json);
+    const unlisten = history.listen((location, action) => {
+      this.handleHistory(location, action);
+    });
+    this.setState({
+      unlisten,
+      history,
+      nodeIndex
+    }
+    );
+  }
+
+  componentWillUnmount() {
+    if (this.state.unlisten) {
+      this.state.unlisten();
+    }
+  }
 
   renderDetail(node) {
     if (node) {
@@ -75,7 +114,8 @@ class App extends Component {
           <TAViewerDetailRow label="TA98 ID" value={node[0]} />
           <TAViewerDetailRow label="Latin name" value={node[2]} />
           <TAViewerDetailRow label="Synonyms" value={node[3]} />
-          <TAViewerDetailRow label="Wikipedia" value={WikipediaLink(node[4], "_blank")}/>
+          <TAViewerDetailRow label="Wikipedia"
+            value={WikipediaLink(node[4], "_blank")} />
         </div>
       );
     }
@@ -88,7 +128,10 @@ class App extends Component {
             <h1 className="app-title">TA98 Viewer</h1>
           </div>
           <div className="taviewer-search">
-            <Complete className="taviewer-complete" data={ta98_json} onSelect={this.selectExpandNode} />
+            <Complete
+              className="taviewer-complete"
+              data={this.state.nodeIndex}
+              onSelect={this.selectExpandNode} />
           </div>
         </header>
         <main className="taviewer-main">
@@ -97,7 +140,8 @@ class App extends Component {
             {this.renderDetail(this.state.selectExpandNode)}
           </div>
           <div className="taviewer-tree">
-            <TA98TreeViewer data={ta98_json}
+            <TA98TreeViewer
+              data={this.state.nodeIndex}
               onSelect={this.selectExpandNode}
               selectExpandNode={this.state.selectExpandNode} />
           </div>
@@ -132,14 +176,15 @@ class Complete extends Component {
     matchingNodes: [],
     selectedNode: null
   }
-  componentDidMount() {
-    this.data_index = index_tree(this.props.data);
-    this.setState({ matchingNodes: _.values(this.data_index) });
+  componentWillMount() {
+    this.setState({
+      matchingNodes: this.props.data.get_nodes()
+    });
   }
 
   handleSearch = (searchString) => {
     let matchingNodes = [];
-    _.forOwn(this.data_index, (v) => {
+    _.forOwn(this.props.data.get_nodes(), (v) => {
       if (prefix_match(searchString.toLowerCase(), v[1]) ||
         _.startsWith(v[0], searchString.toLowerCase())) {
         matchingNodes.push(v);
@@ -151,7 +196,7 @@ class Complete extends Component {
 
   onSelect = (v) => {
     if (v) {
-      let selectedNode = this.data_index[v];
+      let selectedNode = this.props.data.get_node_by_id(v);
       this.setState({
         selectedNode,
         searchString: selectedNode[1]
@@ -177,7 +222,7 @@ class Complete extends Component {
     return (
       <AutoComplete
         showSearch
-        allowClear        
+        allowClear
         ref="autocomplete"
         value={this.state.searchString}
         onSelect={this.onSelect}
@@ -197,7 +242,6 @@ class TA98TreeViewer extends Component {
     selectedKeys: []
   }
   componentDidMount() {
-    this.data_index = index_tree(this.props.data);
     this.selectExpandNode(this.props.selectExpandNode);
   }
 
@@ -228,11 +272,10 @@ class TA98TreeViewer extends Component {
   onSelect = (keys, ev) => {
     this.setState({ selectedKeys: keys })
     if (keys && keys.length === 1 && this.props.onSelect) {
-      this.props.onSelect(this.data_index[keys[0]]);
+      this.props.onSelect(this.props.data.get_node_by_id(keys[0]));
     }
   }
   render() {
-    let data = this.props.data;
     const { expandedKeys, autoExpandParent, selectedKeys } = this.state;
 
     return [
@@ -243,7 +286,7 @@ class TA98TreeViewer extends Component {
         selectedKeys={selectedKeys}
         onSelect={this.onSelect}
       >
-        {tree_level(data)}
+        {tree_level(this.props.data.tree)}
       </Tree>
     ];
   }
