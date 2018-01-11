@@ -49,8 +49,6 @@ function TAViewerDetailRow(props) {
   )
 }
 
-
-
 class App extends Component {
   state = {
     selectExpandNode: null,
@@ -212,7 +210,9 @@ class Complete extends Component {
 
     let children;
     if (matchingNodes.length > 400) {
-      children = <Option disabled={true} key="TooMany">{matchingNodes.length} matches...</Option>;
+      children = <Option 
+                  disabled={true} 
+                    key="TooMany">{matchingNodes.length} matches...</Option>;
     }
     else {
       children = _.map(matchingNodes, m => {
