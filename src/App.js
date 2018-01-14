@@ -3,36 +3,44 @@ import './App.css';
 import _ from 'lodash';
 import prefix_match from './prefix-match';
 import createHistory from 'history/createBrowserHistory';
-import { Tree, AutoComplete } from 'antd';
-import NodeIndex from './NodeIndex';
+import { Collapse, Tree, AutoComplete } from 'antd';
 import queryString from 'query-string';
-import ta98_json from './human.json';
-import wpImageIndex from './wikipedia-images.json';
+import { Wikidata, getSitelinkUrl } from './Wikidata';
 import Lightbox from 'react-images';
 import Gallery from 'react-photo-gallery';
 const TreeNode = Tree.TreeNode;
 const Option = AutoComplete.Option;
 const WikiCommonsPrefix = "https://upload.wikimedia.org/wikipedia/commons/";
+const WikipediaBaseUrl = 'https://en.wikipedia.org/wiki/';
+const WikidataBaseUrl = 'https://www.wikidata.org/wiki/'
+const Panel = Collapse.Panel;
 
-function WikipediaLink(title, target) {
-  if (!title) {
+function TAViewerDetailLinks(props) {
+  const { label, baseUrl, value, target } = props;
+
+  if (value === null || value.length === 0) {
     return null;
   }
-  let underscored = title.replace(' ', '_');
-  let link = `https://en.wikipedia.org/wiki/${underscored}`;
-  if (target) {
-    return <a href={link} target={target}>{title}</a>;
-  }
-  return <a href={link}>{title}</a>;
+  return (
+    <div className="taviewer-detail-row">
+      <div className="taviewer-detail-key">{label}:</div>
+      <div className="taviewer-detail-value">
+        {value.map(x => {
+          let href = `${baseUrl}${encodeURIComponent(x)}`;
+          return <div><a href={href} target={target}>{x}</a></div>;
+        })}
+      </div>
+    </div>
+  )
 }
-
 function TAViewerDetailRow(props) {
   let label = props.label;
   let value = props.value;
 
   if (value === null || (_.isArray(value) && value.length === 0)) {
-    return <div></div>;
+    return null;
   }
+
   if (_.isArray(value)) {
     return (
       <div className="taviewer-detail-row">
@@ -89,14 +97,16 @@ function clampRange(val, items) {
   if (val < 0 || !items) {
     return 0;
   }
-  if(val >= items.length) {
+  if (val >= items.length) {
     return items.length - 1;
   }
   return val;
 }
+
 class TA98ViewerDetail extends Component {
   state = {
     lightboxIsOpen: false,
+    wikidataCache: {},
     currentImage: 0
   }
 
@@ -105,20 +115,77 @@ class TA98ViewerDetail extends Component {
   }
 
   openLightbox = (ev, info) => {
-    this.setState({ 
+    this.setState({
       lightboxIsOpen: true,
       currentImage: info.index
-     });
+    });
   }
 
   gotoNextImage = () => {
-    let currentImage = clampRange(this.state.currentImage + 1, this.props.node[4]);
-    this.setState({currentImage});
+    console.log('goto next', this.props.node);
+    let currentImage = clampRange(this.state.currentImage + 1,
+      this.wikipediaImageUrls());
+    this.setState({ currentImage });
   }
 
   gotoPrevImage = () => {
-    let currentImage = clampRange(this.state.currentImage - 1, this.props.node[4]);
-    this.setState({currentImage});
+    console.log('goto prev', this.props.node[4]);
+
+    let currentImage = clampRange(this.state.currentImage - 1,
+      this.wikipediaImageUrls());
+    this.setState({ currentImage });
+  }
+
+  updateWikidataCache = (id, info) => {
+    this.setState({
+      wikidataCache:
+        _.assign({},
+          this.state.wikidataCache,
+          { [id]: info })
+    });
+  }
+
+  renderWikidataLanguage(id) {
+    if (!id || !this.state.wikidataCache[id]) {
+      return null;
+    }
+    const info = this.state.wikidataCache[id];
+    return _.map(_.sortBy(_.values(info['labels']), 'language'), v => {
+      return (<div key={v["language"]} className="taviewer-detail-row">
+        <div className="taviewer-detail-key">{v['language']}:</div>
+        <div className="taviewer-detail-value">{v['value']}</div>
+      </div>)
+    });
+  }
+
+  renderWikidataWikipedia(id) {
+    if (!id || !this.state.wikidataCache[id]) {
+      return null;
+    }
+    const info = this.state.wikidataCache[id];
+    const siteInfo = _.sortBy(_.values(info['sitelinks']), 'site');
+    return _.map(siteInfo, v => {
+      return (
+        <div key={v["site"]} className="taviewer-detail-row">
+          <div className="taviewer-detail-key">{v['site'].replace('wiki', '')}:</div>
+          <div className="taviewer-detail-value">
+            <div><a href={getSitelinkUrl(v)} target="_blank">{v['title']}</a></div>
+          </div>
+        </div>
+      )
+    })
+  }
+
+  wikipediaImageUrls() {
+    const { node, wpImageIndex } = this.props;
+    if (!node || node[4].length == 0) {
+      return [];
+    }
+    const shortUrls = _.union(_.flatMap(node[4], wpTitle =>
+      _.get(wpImageIndex, wpTitle, [])));
+    console.log(shortUrls, node[4], wpImageIndex);
+    const imageUrls = _.map(shortUrls, x => `${WikiCommonsPrefix}${x}`);
+    return imageUrls;
   }
 
   render() {
@@ -127,36 +194,48 @@ class TA98ViewerDetail extends Component {
     if (!node) {
       return null;
     }
-    let imageUrls = null;
-    if (node[4]) {
-      let shortImageUrls = wpImageIndex[node[4]];
-      if (shortImageUrls) {
-        imageUrls = shortImageUrls.map(x => `${WikiCommonsPrefix}${x}`);
-      }
-    }
+    let wd_entity = node[5];
+    let imageUrls = this.wikipediaImageUrls();
+
     return (
       <div>
+        <Wikidata entityIDs={wd_entity} onValue={this.updateWikidataCache} />
         <h2>{node[1]}</h2>
         <TAViewerDetailRow label="TA98 ID" value={node[0]} />
         <TAViewerDetailRow label="Latin name" value={node[2]} />
         <TAViewerDetailRow label="Synonyms" value={node[3]} />
-        <TAViewerDetailRow label="Wikipedia"
-          value={WikipediaLink(node[4], "_blank")} />
-          <div>
-        <TAViewerDetailGallery
-          isOpen={this.state.lightboxIsOpen}
-          className="taviewer-carousel"
-          onClose={this.closeLightbox}
-          onClick={this.openLightbox}
-          imageUrls={imageUrls} />
-          </div>
-        <TAViewerDetailLightbox
-          isOpen={this.state.lightboxIsOpen}
-          currentImage={this.state.currentImage}
-          gotoPrevImage={this.gotoPrevImage}
-          gotoNextImage={this.gotoNextImage}
-          onClose={this.closeLightbox}
-          imageUrls={imageUrls} />
+        <TAViewerDetailLinks label="Wikipedia"
+          value={node[4]} baseUrl={WikipediaBaseUrl} target="_blank" />
+        <TAViewerDetailLinks label="Wikidata"
+          value={node[5]} baseUrl={WikidataBaseUrl} target="_blank" />
+        <Collapse bordered={false}>
+          {imageUrls.length > 0 ?
+            <Panel header={"Images (" + imageUrls.length + ")"}>
+              <div>
+                <TAViewerDetailGallery
+                  isOpen={this.state.lightboxIsOpen}
+                  className="taviewer-carousel"
+                  onClose={this.closeLightbox}
+                  onClick={this.openLightbox}
+                  imageUrls={imageUrls} />
+                <TAViewerDetailLightbox
+                  isOpen={this.state.lightboxIsOpen}
+                  currentImage={this.state.currentImage}
+                  gotoPrevImage={this.gotoPrevImage}
+                  gotoNextImage={this.gotoNextImage}
+                  onClose={this.closeLightbox}
+                  imageUrls={imageUrls} />
+              </div>
+            </Panel> : null}
+          {wd_entity.length > 0 ?
+            <Panel header="Translations">{this.renderWikidataLanguage(wd_entity[0])}</Panel>
+            : null}
+          {wd_entity.length > 0 ?
+            <Panel header="Other Wikipedia sites">{this.renderWikidataWikipedia(wd_entity[0])}</Panel>
+            : null}
+        </Collapse>
+
+
       </div>
     );
   }
@@ -167,10 +246,8 @@ class App extends Component {
     selectExpandNode: null,
     history: null,
     unlisten: null,
-    nodeIndex: null,
-    wpImageIndex: null,
     lightboxIsOpen: false,
-    currentImage: 0
+    currentImage: 0,
   };
 
   selectExpandNode = n => {
@@ -188,8 +265,8 @@ class App extends Component {
     if (action === 'POP' || action === 'X-INIT') {
       const query = queryString.parse(location.search);
       let selectedNode = null;
-      if (query.id && this.state.nodeIndex.get_node_by_id(query.id)) {
-        selectedNode = this.state.nodeIndex.get_node_by_id(query.id);
+      if (query.id && this.props.ta98Data.get_node_by_id(query.id)) {
+        selectedNode = this.props.ta98Data.get_node_by_id(query.id);
       }
       this.setState({
         selectExpandNode: selectedNode
@@ -203,15 +280,12 @@ class App extends Component {
   componentWillMount() {
 
     const history = createHistory();
-    const nodeIndex = new NodeIndex(ta98_json);
     const unlisten = history.listen((location, action) => {
       this.handleHistory(location, action);
     });
     this.setState({
-      wpImageIndex,
       unlisten,
       history,
-      nodeIndex
     }
     );
   }
@@ -221,38 +295,37 @@ class App extends Component {
     }
   }
 
+  render() {
+    return (
+      <div className="taviewer">
+        <header className="taviewer-header">
+          <div className="taviewer-title">
+            <h1 className="app-title">TA98 Viewer</h1>
+          </div>
+          <div className="taviewer-search">
+            <Complete
+              className="taviewer-complete"
+              data={this.props.ta98Data}
+              onSelect={this.selectExpandNode} />
+          </div>
+        </header>
+        <main className="taviewer-main">
 
-render() {
-  return (
-    <div className="taviewer">
-      <header className="taviewer-header">
-        <div className="taviewer-title">
-          <h1 className="app-title">TA98 Viewer</h1>
-        </div>
-        <div className="taviewer-search">
-          <Complete
-            className="taviewer-complete"
-            data={this.state.nodeIndex}
-            onSelect={this.selectExpandNode} />
-        </div>
-      </header>
-      <main className="taviewer-main">
-
-        <div className="taviewer-detail">
-          <TA98ViewerDetail 
-            node={this.state.selectExpandNode} 
-            wpImageIndex={this.state.wpImageIndex} />
-        </div>
-        <div className="taviewer-tree">
-          <TA98TreeViewer
-            data={this.state.nodeIndex}
-            onSelect={this.selectExpandNode}
-            selectExpandNode={this.state.selectExpandNode} />
-        </div>
-      </main>
-    </div>
-  );
-}
+          <div className="taviewer-detail">
+            <TA98ViewerDetail
+              node={this.state.selectExpandNode}
+              wpImageIndex={this.props.wpImageIndex} />
+          </div>
+          <div className="taviewer-tree">
+            <TA98TreeViewer
+              data={this.props.ta98Data}
+              onSelect={this.selectExpandNode}
+              selectExpandNode={this.state.selectExpandNode} />
+          </div>
+        </main>
+      </div>
+    );
+  }
 }
 
 function tree_level(node_list) {
@@ -262,13 +335,13 @@ function tree_level(node_list) {
   let sorted_list = _.sortBy(node_list, x => x[1]);
   return (_.map(sorted_list, node => {
     let title_text = `${node[1]} (${node[0]})`;
-    let is_group = node.length === 6;
+    let is_group = node.length === 7;
     return (
       <TreeNode
         className={is_group ? "taviewer-group" : "taviewer-leaf"}
         title={title_text}
         key={node[0]}>
-        {tree_level(node[5])}
+        {tree_level(node[6])}
       </TreeNode>
     );
   }));
@@ -290,7 +363,7 @@ class Complete extends Component {
     let matchingNodes = [];
     _.forOwn(this.props.data.get_nodes(), (v) => {
       if (prefix_match(searchString.toLowerCase(), v[1]) ||
-        _.startsWith(v[0], searchString.toLowerCase())) {
+        _.startsWith(v[0], searchString.toUpperCase())) {
         matchingNodes.push(v);
       }
     })
@@ -301,6 +374,7 @@ class Complete extends Component {
   onSelect = (v) => {
     if (v) {
       let selectedNode = this.props.data.get_node_by_id(v);
+
       this.setState({
         selectedNode,
         searchString: selectedNode[1]
@@ -376,10 +450,12 @@ class TA98TreeViewer extends Component {
   }
 
   onSelect = (keys, ev) => {
-    this.setState({ selectedKeys: keys })
+
     if (keys && keys.length === 1 && this.props.onSelect) {
       this.props.onSelect(this.props.data.get_node_by_id(keys[0]));
     }
+    this.setState({ selectedKeys: keys });
+
   }
   render() {
     const { expandedKeys, autoExpandParent, selectedKeys } = this.state;

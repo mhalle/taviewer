@@ -10,9 +10,12 @@ html, body root, .taviewer {
 }
   .taviewer {
     font-family: Helvetica, Arial, san-serif;
-    position: fixed;
     display: flex;
     flex-direction: column;
+  }
+  .taviewer .ant-collapse {
+    font-family: Helvetica, Arial, san-serif;
+
   }
 
 .taviewer-detail-image {
@@ -101,6 +104,7 @@ html, body root, .taviewer {
   .taviewer {
     position: fixed;
   }
+
   .taviewer-title {
     flex: 0.8;
     padding-top: 20px;
@@ -144,8 +148,8 @@ html, body root, .taviewer {
   */
 
 
-
 .taviewer-detail-row {
+  padding-left: 15px;
   display: flex;
   flex-direction: row;
 }
@@ -232,3 +236,35 @@ body {
 #lightboxBackdrop {
   background: rgb(200, 200, 200);
 }
+
+.taviewer .ant-collapse > .ant-collapse-item > .ant-collapse-header .arrow {
+  top: -11px;
+  left: 0px;
+}
+
+.taviewer .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 15px;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+}
+.taviewer .ant-collapse-borderless > 
+  .ant-collapse-item > 
+  .ant-collapse-content > 
+  .ant-collapse-content-box {
+    padding-bottom: 8px;
+}
+
+.taviewer .ant-collapse-content {
+  padding-left: 0px;
+}
+
+.taviewer .ant-collapse > .ant-collapse-item {
+  border: 0px solid black;
+}
+/*
+.taviewer .ant-collapse-borderless > .ant-collapse-item {
+  border-bottom: 0px solid #d9d9d9;
+}
+*/
