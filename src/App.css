@@ -98,6 +98,9 @@ html, body root, .taviewer {
 }
 
 @media (min-width: 700px) {
+  .taviewer {
+    position: fixed;
+  }
   .taviewer-title {
     flex: 0.8;
     padding-top: 20px;
