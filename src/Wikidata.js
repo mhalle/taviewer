@@ -1,9 +1,30 @@
-import wdk from 'wikidata-sdk';
+import wdk from 'wikidata-sdk/dist/wikidata-sdk';
 import _ from 'lodash';
 import { Component } from 'react';
 
 
 const getSitelinkUrl = wdk.getSitelinkUrl;
+
+
+function getEntityClaimValues(entity, propId){
+    const claimEntry = _.get(entity, ['claims', propId], null);
+    if (!claimEntry) {
+        return null;
+    }
+    const values = _.compact(_.map(claimEntry, valueInfo => 
+                    _.get(valueInfo, ['mainsnak', 'datavalue', 'value'], null)));
+    return values;
+}
+
+function getWikipedia(entity, wiki) {
+    wiki = wiki || 'enwiki';
+   const wikiEntry = _.get(entity, `sitelinks.${wiki}`, null);
+   if(wikiEntry === null) {
+       return null;
+   }
+   const wikiUrl = wdk.getSitelinkUrl(wikiEntry);
+   return [wikiEntry.title, wikiUrl];
+}
 
 class Wikidata extends Component {
     state = {
@@ -23,7 +44,7 @@ class Wikidata extends Component {
         this.setState({pending: _.assign({}, this.state.pending, pendingMod)});
 
         const queryUrl = wdk.getEntities([entityID], null,
-            ['labels', 'descriptions', 'aliases', 'sitelinks']);
+            ['labels', 'descriptions', 'aliases', 'sitelinks', 'claims']);
         pendingMod[entityID] = true;
         fetch(queryUrl)
             .then(res => {
@@ -58,7 +79,6 @@ class Wikidata extends Component {
     }
 
     componentDidMount() {
-        console.log('cdm');
         const { entityIDs } = this.props;
         _.forEach(entityIDs, entityID => {
             setTimeout(this.wikidataEntityQuery(entityID), 1);
@@ -83,8 +103,12 @@ class Wikidata extends Component {
     }
 
     render() {
-        console.log('render');
         return null;
     }
 }
-export {Wikidata, getSitelinkUrl};
+export default {
+    Wikidata, 
+    getWikipedia,
+    getEntityClaimValues,
+    getSitelinkUrl
+};
