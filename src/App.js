@@ -5,7 +5,9 @@ import prefix_match from './prefix-match';
 import createHistory from 'history/createBrowserHistory';
 import { Collapse, Tree, AutoComplete } from 'antd';
 import queryString from 'query-string';
-import { Wikidata, getSitelinkUrl } from './Wikidata';
+import wikidata from './Wikidata';
+import Wikipedia from './Wikipedia';
+
 import Lightbox from 'react-images';
 import Gallery from 'react-photo-gallery';
 const TreeNode = Tree.TreeNode;
@@ -61,7 +63,6 @@ function TAViewerDetailRow(props) {
   )
 }
 
-
 class TAViewerDetailGallery extends Component {
   render() {
     let imageUrls = this.props.imageUrls;
@@ -107,6 +108,7 @@ class TA98ViewerDetail extends Component {
   state = {
     lightboxIsOpen: false,
     wikidataCache: {},
+    wikipediaCache: {},
     currentImage: 0
   }
 
@@ -122,15 +124,12 @@ class TA98ViewerDetail extends Component {
   }
 
   gotoNextImage = () => {
-    console.log('goto next', this.props.node);
     let currentImage = clampRange(this.state.currentImage + 1,
       this.wikipediaImageUrls());
     this.setState({ currentImage });
   }
 
   gotoPrevImage = () => {
-    console.log('goto prev', this.props.node[4]);
-
     let currentImage = clampRange(this.state.currentImage - 1,
       this.wikipediaImageUrls());
     this.setState({ currentImage });
@@ -145,11 +144,54 @@ class TA98ViewerDetail extends Component {
     });
   }
 
-  renderWikidataLanguage(id) {
-    if (!id || !this.state.wikidataCache[id]) {
+  updateWikipediaCache = (title, info) => {
+    this.setState({
+      wikipediaCache:
+        _.assign({},
+          this.state.wikipediaCache,
+          { [title]: info })
+    });
+  }
+
+  renderWikidataProperty(ids, propId, propLabel, urlPrefix) {
+    if(!ids || ids.length === 0) {
       return null;
     }
-    const info = this.state.wikidataCache[id];
+    const validEntities = _.compact(_.map(ids, id => this.state.wikidataCache[id]));
+    if(validEntities.length === 0) {
+      return null;
+    }
+
+    let claimValue = null;
+    for(let entity of validEntities) {
+      claimValue = wikidata.getEntityClaimValues(entity, propId);
+      if(claimValue !== null) {
+        break;
+      }
+    }
+    if(claimValue === null) {
+      return null;
+    }
+    let displayValue = urlPrefix ? <a href={urlPrefix + claimValue} target='_blank'>{claimValue}</a> : 
+                       claimValue;
+    
+    return (<div key={propId} className="taviewer-detail-row">
+        <div className="taviewer-detail-key">{propLabel}:</div>
+        <div className="taviewer-detail-value">{displayValue}</div>
+      </div>);
+
+  }
+
+  renderWikidataLanguage(ids) {
+    if(!ids || ids.length === 0) {
+      return null;
+    }
+    const validEntities = _.compact(_.map(ids, id => this.state.wikidataCache[id]));
+    if(validEntities.length === 0) {
+      return null;
+    }
+    /// hack here
+    const info = validEntities[0];
     return _.map(_.sortBy(_.values(info['labels']), 'language'), v => {
       return (<div key={v["language"]} className="taviewer-detail-row">
         <div className="taviewer-detail-key">{v['language']}:</div>
@@ -158,18 +200,23 @@ class TA98ViewerDetail extends Component {
     });
   }
 
-  renderWikidataWikipedia(id) {
-    if (!id || !this.state.wikidataCache[id]) {
+  renderWikidataWikipedia(ids) {
+    if(!ids || ids.length === 0) {
       return null;
     }
-    const info = this.state.wikidataCache[id];
+    const validEntities = _.compact(_.map(ids, id => this.state.wikidataCache[id]));
+    if(validEntities.length === 0) {
+      return null;
+    }
+    /// hack here
+    const info = validEntities[0];
     const siteInfo = _.sortBy(_.values(info['sitelinks']), 'site');
     return _.map(siteInfo, v => {
       return (
         <div key={v["site"]} className="taviewer-detail-row">
           <div className="taviewer-detail-key">{v['site'].replace('wiki', '')}:</div>
           <div className="taviewer-detail-value">
-            <div><a href={getSitelinkUrl(v)} target="_blank">{v['title']}</a></div>
+            <div><a href={wikidata.getSitelinkUrl(v)} target="_blank">{v['title']}</a></div>
           </div>
         </div>
       )
@@ -177,14 +224,21 @@ class TA98ViewerDetail extends Component {
   }
 
   wikipediaImageUrls() {
-    const { node, wpImageIndex } = this.props;
-    if (!node || node[4].length == 0) {
+    const { node } = this.props;
+    const { wikipediaCache } = this.state;
+    if (!node || node[4].length === 0) {
       return [];
     }
-    const shortUrls = _.union(_.flatMap(node[4], wpTitle =>
+    /* const shortUrls = _.union(_.flatMap(node[4], wpTitle =>
       _.get(wpImageIndex, wpTitle, [])));
-    console.log(shortUrls, node[4], wpImageIndex);
-    const imageUrls = _.map(shortUrls, x => `${WikiCommonsPrefix}${x}`);
+    const imageUrls = _.map(shortUrls, x => `${WikiCommonsPrefix}${x}`); */
+    let imageUrls = [];
+    for(let wikiTitle of node[4]) {
+      const wikiInfo = _.get(wikipediaCache, wikiTitle, null);
+      if(wikiInfo && wikiInfo.images) {
+        imageUrls = _.union(imageUrls, wikiInfo.images);
+      }
+    }
     return imageUrls;
   }
 
@@ -194,12 +248,14 @@ class TA98ViewerDetail extends Component {
     if (!node) {
       return null;
     }
-    let wd_entity = node[5];
+    let wdEntityIDs = node[5];
     let imageUrls = this.wikipediaImageUrls();
-
+    console.log('lightbox', this.state.lightboxIsOpen);
     return (
       <div>
-        <Wikidata entityIDs={wd_entity} onValue={this.updateWikidataCache} />
+        <wikidata.Wikidata entityIDs={wdEntityIDs} onValue={this.updateWikidataCache} />
+        <Wikipedia wikiTitles={node[4]} onValue={this.updateWikipediaCache} />
+
         <h2>{node[1]}</h2>
         <TAViewerDetailRow label="TA98 ID" value={node[0]} />
         <TAViewerDetailRow label="Latin name" value={node[2]} />
@@ -208,6 +264,13 @@ class TA98ViewerDetail extends Component {
           value={node[4]} baseUrl={WikipediaBaseUrl} target="_blank" />
         <TAViewerDetailLinks label="Wikidata"
           value={node[5]} baseUrl={WikidataBaseUrl} target="_blank" />
+        {this.renderWikidataProperty(wdEntityIDs, 
+            'P696', 
+            "NeurolexID", 'http://neurolex.org/wiki/')}
+        {this.renderWikidataProperty(wdEntityIDs, 
+              'P486', "Mesh ID", 
+              'https://meshb.nlm.nih.gov/#/record/ui?ui=')}
+
         <Collapse bordered={false}>
           {imageUrls.length > 0 ?
             <Panel header={"Images (" + imageUrls.length + ")"}>
@@ -218,20 +281,20 @@ class TA98ViewerDetail extends Component {
                   onClose={this.closeLightbox}
                   onClick={this.openLightbox}
                   imageUrls={imageUrls} />
-                <TAViewerDetailLightbox
+                {imageUrls.length ? <TAViewerDetailLightbox
                   isOpen={this.state.lightboxIsOpen}
                   currentImage={this.state.currentImage}
                   gotoPrevImage={this.gotoPrevImage}
                   gotoNextImage={this.gotoNextImage}
                   onClose={this.closeLightbox}
-                  imageUrls={imageUrls} />
+                  imageUrls={imageUrls} /> : null}
               </div>
             </Panel> : null}
-          {wd_entity.length > 0 ?
-            <Panel header="Translations">{this.renderWikidataLanguage(wd_entity[0])}</Panel>
+          {wdEntityIDs.length > 0 ?
+            <Panel header="Translations">{this.renderWikidataLanguage(wdEntityIDs)}</Panel>
             : null}
-          {wd_entity.length > 0 ?
-            <Panel header="Other Wikipedia sites">{this.renderWikidataWikipedia(wd_entity[0])}</Panel>
+          {wdEntityIDs.length > 0 ?
+            <Panel header="Other Wikipedia sites">{this.renderWikidataWikipedia(wdEntityIDs)}</Panel>
             : null}
         </Collapse>
 
@@ -252,7 +315,10 @@ class App extends Component {
 
   selectExpandNode = n => {
     let selectExpandNode = n;
-    this.setState({ selectExpandNode });
+    this.setState({ 
+      selectExpandNode,
+      lightboxIsOpen: false
+     });
     if (n) {
       this.state.history.push(`/?id=${n[0]}`);
     }
@@ -262,13 +328,16 @@ class App extends Component {
   }
 
   handleHistory = (location, action) => {
+    console.log('handleHistory', location, action);
     if (action === 'POP' || action === 'X-INIT') {
       const query = queryString.parse(location.search);
       let selectedNode = null;
       if (query.id && this.props.ta98Data.get_node_by_id(query.id)) {
         selectedNode = this.props.ta98Data.get_node_by_id(query.id);
       }
+      console.log("lightbox state", this.state.lightboxIsOpen);
       this.setState({
+        lightboxIsOpen: false,
         selectExpandNode: selectedNode
       });
     }
@@ -283,6 +352,7 @@ class App extends Component {
     const unlisten = history.listen((location, action) => {
       this.handleHistory(location, action);
     });
+    console.log('will mount');
     this.setState({
       unlisten,
       history,
