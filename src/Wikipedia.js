@@ -1,18 +1,29 @@
 import _ from 'lodash';
 import { Component } from 'react';
 
-const BogusImageRe = RegExp('(.*Lock-green.svg)|\
-(.*Wiktionary-logo.*)|\
-(.*Commons-logo.*)|\
-(.*Wiki_letter_w.*)|\
-(.*Folder_Hexagonal_Icon.*)|\
-(.*Portal-puzzle.*)|\
-(.*Symbol_.*)|\
-(.*People_icon.*)|\
-(.*Question_book.*)|\
-(.*Padlock.*)|\
-(.*WHO_Rod.*)\
-');
+const BogusImageRe = RegExp(
+    '(.*Lock-green.svg)|' +
+    '(.*Wiktionary-logo.*)|' +
+    '(.*Commons-logo.*)|' +
+    '(.*Wiki_letter_w.*)|' +
+    '(.*Folder_Hexagonal_Icon.*)|' +
+    '(.*Portal-puzzle.*)|' +
+    '(.*Symbol_.*)|' +
+    '(.*People_icon.*)|' +
+    '(.*Question_book.*)|' +
+    '(.*Padlock.*)|' +
+    '(.*Edit-clear.*)|' + 
+    '(.*Ambox_important.*)|' + 
+    '(.*WHO_Rod.*)|' +
+    '(.*/Bone.png$)|'+
+    '(.*Open_Access_logo_PLoS.*)|' + 
+    '(.*Issoria_lathonia.jpg.*)|' +
+    '(.*Text_docu.*)|' +
+    '(.*Translation_.*)|' + 
+    '(.*Wikibooks-logo.*)|' +
+    '(.*Gray298.*)|' +
+    '(.*Skeleton_woman_back.jpg.*)'
+);
 
 function filterBogusImages(imageInfo) {
     return _.filter(imageInfo, info => {
