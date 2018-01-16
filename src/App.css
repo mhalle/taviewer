@@ -1,7 +1,4 @@
 @import '~antd/dist/antd.css';
-@import "~slick-carousel/slick/slick.css";
-@import "~slick-carousel/slick/slick-theme.css";
-
 
 html, body root, .taviewer {
   width: 100%;
@@ -96,12 +93,7 @@ html, body root, .taviewer {
     flex: 1;
     min-height: 0;
   }
-}
 
-.taviewer-tree {
-  overflow-y: scroll;
-  padding: 10px;
-  flex: 1.5;
 }
 
 @media (min-width: 700px) {
@@ -122,8 +114,6 @@ html, body root, .taviewer {
     padding-right: 30px;
   }
 
-
-
 .taviewer-main {
   display: flex;
   padding-top: 3px;
@@ -136,6 +126,8 @@ html, body root, .taviewer {
   overflow-y: scroll;
   padding: 5px;
   padding-left: 15px;
+  flex: 0.9;
+}
 .taviewer-tree {
   overflow-y: scroll;
 }
@@ -164,11 +156,13 @@ html, body root, .taviewer {
   text-align: left;
   font-weight: bold;
   padding-right: 10px;
+  color: #000000;
 }
 
 .taviewer-detail-value {
   flex: 1;
   padding-right: 20px;
+  color: #000000;
 }
 
 /*
@@ -273,3 +267,7 @@ body {
   border-bottom: 0px solid #d9d9d9;
 }
 */
+
+.taviewer-lightbox .ril-inner {
+  background-color: white;
+}
