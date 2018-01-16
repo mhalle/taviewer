@@ -56,7 +56,7 @@ class Wikipedia extends Component {
     wikipediaQuery(wikiTitle) {
         this.setState({ pending: _.assign({}, this.state.pending, { [wikiTitle]: true }) });
 
-        const searchUrl = getWikipediaImageinfoUrl(wikiTitle, 128, 128);
+        const searchUrl = getWikipediaImageinfoUrl(wikiTitle, 256, 256);
         fetch(searchUrl).then(res => {
             if (!res.ok) {
                 throw new Error('wikipedia request error');
