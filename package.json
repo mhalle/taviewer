@@ -8,6 +8,7 @@
     "query-string": "^5.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-image-lightbox": "^4.4.1",
     "react-image-resizer": "^1.2.0",
     "react-images": "^0.5.14",
     "react-photo-gallery": "^6.0.22",
