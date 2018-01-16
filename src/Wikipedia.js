@@ -65,9 +65,9 @@ class Wikipedia extends Component {
         }).then(doc => {
             const pages = _.values(doc.query.pages);
             const imageInfo = _.map(pages, page => page.imageinfo[0]);
-            return  filterBogusImages(imageInfo);
+            return filterBogusImages(imageInfo);
         }).then(imageInfo => {
-            const wikiInfo = { 
+            const wikiInfo = {
                 imageInfo: imageInfo
             };
             this.setState({

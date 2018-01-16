@@ -8,11 +8,10 @@ import queryString from 'query-string';
 import wikidata from './Wikidata';
 import Wikipedia from './Wikipedia';
 
-import Lightbox from 'react-images';
+import Lightbox from 'react-image-lightbox';
 import Gallery from 'react-photo-gallery';
 const TreeNode = Tree.TreeNode;
 const Option = AutoComplete.Option;
-const WikiCommonsPrefix = "https://upload.wikimedia.org/wikipedia/commons/";
 const WikipediaBaseUrl = 'https://en.wikipedia.org/wiki/';
 const WikidataBaseUrl = 'https://www.wikidata.org/wiki/'
 const Panel = Collapse.Panel;
@@ -65,74 +64,83 @@ function TAViewerDetailRow(props) {
 
 class TAViewerDetailGallery extends Component {
   render() {
-    let imageUrls = this.props.imageUrls;
-    if (!imageUrls) { return null };
+    let imageInfo = this.props.imageInfo;
+    if (!imageInfo) { return null };
     return (
       <Gallery
         onClick={this.props.onClick}
-        photos={imageUrls.map(x => ({ src: x, width: 1, height: 1 }))} />
+        photos={imageInfo.map(x => ({ src: x.thumburl, width: x.thumbwidth, height: x.thumbheight }))} />
     );
   }
 }
 class TAViewerDetailLightbox extends Component {
+  state = {
+    currentImage: 0
+  }
+
+  gotoPrevImage = () => {
+    const { imageInfo, currentImage } = this.props;
+    const nImages = imageInfo.length;
+    this.props.setCurrentImage((currentImage - 1 + nImages) % nImages);
+  }
+
+  gotoNextImage = () => {
+    const { imageInfo, currentImage } = this.props;
+    const nImages = imageInfo.length;
+    this.props.setCurrentImage((currentImage + 1) % nImages)
+  }
+
   render() {
-    let imageUrls = this.props.imageUrls;
-    if (!imageUrls) {
-      return null;
-    }
+    const { imageInfo, currentImage } = this.props;
+    const nImages = imageInfo.length;
     return (
       <div>
         <Lightbox
-          onClickPrev={this.props.gotoPrevImage}
-          onClickNext={this.props.gotoNextImage}
-          currentImage={this.props.currentImage}
-          isOpen={this.props.isOpen}
-          images={imageUrls.map(x => ({ src: x }))}
-          onClose={this.props.onClose} />
+          imagePadding={100}
+          wrapperClassName="taviewer-lightbox"
+          mainSrc={imageInfo[currentImage].url}
+          nextSrc={imageInfo[(currentImage + 1) % nImages].url}
+          prevSrc={imageInfo[(currentImage + nImages - 1) % nImages].url}
+
+          onMovePrevRequest={this.gotoPrevImage}
+          onMoveNextRequest={this.gotoNextImage}
+          images={imageInfo.map(x => ({ src: x.url }))}
+          onCloseRequest={this.props.onClose} />
       </div>
     );
   }
 }
 
-function clampRange(val, items) {
-  if (val < 0 || !items) {
-    return 0;
+function getWikipediaImageInfo(titles, wikipediaCache) {
+  if(!titles || titles.length === 0) {
+    return []
   }
-  if (val >= items.length) {
-    return items.length - 1;
+  let imageInfo = [];
+  for (let wikiTitle of titles) {
+    const wikiInfo = _.get(wikipediaCache, wikiTitle, null);
+    if (wikiInfo && wikiInfo.images) {
+      imageInfo = _.union(imageInfo, wikiInfo.imageInfo);
+    }
   }
-  return val;
+  return imageInfo;
 }
 
 class TA98ViewerDetail extends Component {
   state = {
-    lightboxIsOpen: false,
     wikidataCache: {},
     wikipediaCache: {},
     currentImage: 0
   }
 
   closeLightbox = () => {
-    this.setState({ lightboxIsOpen: false });
+    this.props.closeLightbox();
   }
 
   openLightbox = (ev, info) => {
     this.setState({
-      lightboxIsOpen: true,
       currentImage: info.index
     });
-  }
-
-  gotoNextImage = () => {
-    let currentImage = clampRange(this.state.currentImage + 1,
-      this.wikipediaImageUrls());
-    this.setState({ currentImage });
-  }
-
-  gotoPrevImage = () => {
-    let currentImage = clampRange(this.state.currentImage - 1,
-      this.wikipediaImageUrls());
-    this.setState({ currentImage });
+    this.props.openLightbox();
   }
 
   updateWikidataCache = (id, info) => {
@@ -153,41 +161,57 @@ class TA98ViewerDetail extends Component {
     });
   }
 
+  setCurrentImage = (i) => {
+    this.setState({ currentImage: i });
+  }
+
   renderWikidataProperty(ids, propId, propLabel, urlPrefix) {
-    if(!ids || ids.length === 0) {
+    if (!ids || ids.length === 0) {
       return null;
     }
     const validEntities = _.compact(_.map(ids, id => this.state.wikidataCache[id]));
-    if(validEntities.length === 0) {
+    if (validEntities.length === 0) {
       return null;
     }
 
     let claimValue = null;
-    for(let entity of validEntities) {
+    for (let entity of validEntities) {
       claimValue = wikidata.getEntityClaimValues(entity, propId);
-      if(claimValue !== null) {
+      if (claimValue !== null) {
         break;
       }
     }
-    if(claimValue === null) {
+    if (claimValue === null) {
       return null;
     }
-    let displayValue = urlPrefix ? <a href={urlPrefix + claimValue} target='_blank'>{claimValue}</a> : 
-                       claimValue;
-    
-    return (<div key={propId} className="taviewer-detail-row">
-        <div className="taviewer-detail-key">{propLabel}:</div>
-        <div className="taviewer-detail-value">{displayValue}</div>
-      </div>);
+    let displayValue = urlPrefix ? <a href={urlPrefix + claimValue} target='_blank'>{claimValue}</a> :
+      claimValue;
 
+    return (<div key={propId} className="taviewer-detail-row">
+      <div className="taviewer-detail-key">{propLabel}:</div>
+      <div className="taviewer-detail-value">{displayValue}</div>
+    </div>);
+
+  }
+  getWikidataLanguageCount(ids) {
+    if (!ids || ids.length === 0) {
+      return 0;
+    }
+    const validEntities = _.compact(_.map(ids, id => this.state.wikidataCache[id]));
+    if (validEntities.length === 0) {
+      return 0;
+    }
+    /// hack here
+    const info = validEntities[0];
+    return _.values(info['labels']).length;
   }
 
   renderWikidataLanguage(ids) {
-    if(!ids || ids.length === 0) {
+    if (!ids || ids.length === 0) {
       return null;
     }
     const validEntities = _.compact(_.map(ids, id => this.state.wikidataCache[id]));
-    if(validEntities.length === 0) {
+    if (validEntities.length === 0) {
       return null;
     }
     /// hack here
@@ -200,12 +224,24 @@ class TA98ViewerDetail extends Component {
     });
   }
 
+  getWikipediaArticleCount(ids) {
+    if (!ids || ids.length === 0) {
+      return 0;
+    }
+    const validEntities = _.compact(_.map(ids, id => this.state.wikidataCache[id]));
+    if (validEntities.length === 0) {
+      return 0;
+    }
+    /// hack here
+    const info = validEntities[0];
+    return _.values(info['sitelinks']).length;
+  }
   renderWikidataWikipedia(ids) {
-    if(!ids || ids.length === 0) {
+    if (!ids || ids.length === 0) {
       return null;
     }
     const validEntities = _.compact(_.map(ids, id => this.state.wikidataCache[id]));
-    if(validEntities.length === 0) {
+    if (validEntities.length === 0) {
       return null;
     }
     /// hack here
@@ -223,82 +259,86 @@ class TA98ViewerDetail extends Component {
     })
   }
 
-  wikipediaImageUrls() {
-    const { node } = this.props;
-    const { wikipediaCache } = this.state;
-    if (!node || node[4].length === 0) {
-      return [];
+  getWikidataWikipediaUrls(ids) {
+    if (!ids || ids.length === 0) {
+      return null;
     }
-    /* const shortUrls = _.union(_.flatMap(node[4], wpTitle =>
-      _.get(wpImageIndex, wpTitle, [])));
-    const imageUrls = _.map(shortUrls, x => `${WikiCommonsPrefix}${x}`); */
-    let imageUrls = [];
-    for(let wikiTitle of node[4]) {
-      const wikiInfo = _.get(wikipediaCache, wikiTitle, null);
-      if(wikiInfo && wikiInfo.images) {
-        imageUrls = _.union(imageUrls, wikiInfo.images);
+    const validEntities = _.compact(_.map(ids, id => this.state.wikidataCache[id]));
+    if (validEntities.length === 0) {
+      return null;
+    }
+    let wikipediaLinkInfo = [];
+    for (let entity of validEntities) {
+      const siteField = _.get(entity, ['sitelinks', 'enwiki'], null);
+      if (siteField) {
+        const siteUrl = wikidata.getSitelinkUrl(siteField);
+        wikipediaLinkInfo.push([siteField.title, siteUrl]);
       }
     }
-    return imageUrls;
+    return wikipediaLinkInfo;
   }
 
+
   render() {
-    let node = this.props.node;
-    let wpImageIndex = this.props.wpImageIndex;
+    const { node, lightboxIsOpen } = this.props;
+    const { wikipediaCache } = this.state;
     if (!node) {
       return null;
     }
     let wdEntityIDs = node[5];
-    let imageUrls = this.wikipediaImageUrls();
-    console.log('lightbox', this.state.lightboxIsOpen);
+
+    const languageCount = this.getWikidataLanguageCount(wdEntityIDs);
+    const siteCount = this.getWikipediaArticleCount(wdEntityIDs);
+    const wikipediaTitles = _.map(this.getWikidataWikipediaUrls(wdEntityIDs), 0);
+    let imageInfo = getWikipediaImageInfo(wikipediaTitles, wikipediaCache);
+
     return (
       <div>
         <wikidata.Wikidata entityIDs={wdEntityIDs} onValue={this.updateWikidataCache} />
-        <Wikipedia wikiTitles={node[4]} onValue={this.updateWikipediaCache} />
+        <Wikipedia wikiTitles={wikipediaTitles} onValue={this.updateWikipediaCache} />
 
         <h2>{node[1]}</h2>
         <TAViewerDetailRow label="TA98 ID" value={node[0]} />
         <TAViewerDetailRow label="Latin name" value={node[2]} />
         <TAViewerDetailRow label="Synonyms" value={node[3]} />
         <TAViewerDetailLinks label="Wikipedia"
-          value={node[4]} baseUrl={WikipediaBaseUrl} target="_blank" />
+          value={wikipediaTitles} baseUrl={WikipediaBaseUrl} target="_blank" />
         <TAViewerDetailLinks label="Wikidata"
           value={node[5]} baseUrl={WikidataBaseUrl} target="_blank" />
-        {this.renderWikidataProperty(wdEntityIDs, 
-            'P696', 
-            "NeurolexID", 'http://neurolex.org/wiki/')}
-        {this.renderWikidataProperty(wdEntityIDs, 
-              'P486', "Mesh ID", 
-              'https://meshb.nlm.nih.gov/#/record/ui?ui=')}
+        {this.renderWikidataProperty(wdEntityIDs,
+          'P696',
+          "Neurolex ID", 'http://neurolex.org/wiki/')}
+        {this.renderWikidataProperty(wdEntityIDs,
+          'P486', "Mesh ID",
+          'https://meshb.nlm.nih.gov/#/record/ui?ui=')}
 
         <Collapse bordered={false}>
-          {imageUrls.length > 0 ?
-            <Panel header={"Images (" + imageUrls.length + ")"}>
+          {imageInfo.length > 0 ?
+            <Panel header={"Wikipedia images (" + imageInfo.length + ")"}>
               <div>
                 <TAViewerDetailGallery
                   isOpen={this.state.lightboxIsOpen}
                   className="taviewer-carousel"
                   onClose={this.closeLightbox}
                   onClick={this.openLightbox}
-                  imageUrls={imageUrls} />
-                {imageUrls.length ? <TAViewerDetailLightbox
-                  isOpen={this.state.lightboxIsOpen}
-                  currentImage={this.state.currentImage}
-                  gotoPrevImage={this.gotoPrevImage}
-                  gotoNextImage={this.gotoNextImage}
-                  onClose={this.closeLightbox}
-                  imageUrls={imageUrls} /> : null}
+                  imageInfo={imageInfo} />
+
               </div>
             </Panel> : null}
-          {wdEntityIDs.length > 0 ?
-            <Panel header="Translations">{this.renderWikidataLanguage(wdEntityIDs)}</Panel>
+          {languageCount > 0 ?
+            <Panel header={`Translations (${languageCount})`} >{this.renderWikidataLanguage(wdEntityIDs)}</Panel>
             : null}
-          {wdEntityIDs.length > 0 ?
-            <Panel header="Other Wikipedia sites">{this.renderWikidataWikipedia(wdEntityIDs)}</Panel>
+          {siteCount > 0 ?
+            <Panel header={`Wikipedia sites (${siteCount})`}>{this.renderWikidataWikipedia(wdEntityIDs)}</Panel>
             : null}
         </Collapse>
-
-
+        {lightboxIsOpen ? <TAViewerDetailLightbox
+          currentImage={this.state.currentImage}
+          gotoPrevImage={this.gotoPrevImage}
+          gotoNextImage={this.gotoNextImage}
+          setCurrentImage={this.setCurrentImage}
+          onClose={this.closeLightbox}
+          imageInfo={imageInfo} /> : null}
       </div>
     );
   }
@@ -313,29 +353,44 @@ class App extends Component {
     currentImage: 0,
   };
 
-  selectExpandNode = n => {
-    let selectExpandNode = n;
-    this.setState({ 
-      selectExpandNode,
+  selectExpandNode = (n) => {
+    this.setState({
+      selectExpandNode: n,
       lightboxIsOpen: false
-     });
-    if (n) {
-      this.state.history.push(`/?id=${n[0]}`);
-    }
-    else {
-      this.state.history.push('/');
-    }
+    });
+    this.pushHistory(n);
+  }
+
+  pushHistory = (n, lightboxOn) => {
+    const uri = n ? `/?id=${n[0]}` : '/';
+    const historyState = lightboxOn ? { lb: 1 } : undefined;
+
+    this.state.history.push(uri, historyState);
+  }
+
+  openLightbox = () => {
+    this.setState({ lightboxIsOpen: true });
+  }
+
+  closeLightbox = () => {
+    this.setState({ lightboxIsOpen: false });
   }
 
   handleHistory = (location, action) => {
-    console.log('handleHistory', location, action);
     if (action === 'POP' || action === 'X-INIT') {
+      if (this.state.lightboxIsOpen) {
+        this.pushHistory(this.state.selectExpandNode);
+        this.setState({
+          lightboxIsOpen: false
+        });
+        return;
+      }
+
       const query = queryString.parse(location.search);
       let selectedNode = null;
       if (query.id && this.props.ta98Data.get_node_by_id(query.id)) {
         selectedNode = this.props.ta98Data.get_node_by_id(query.id);
       }
-      console.log("lightbox state", this.state.lightboxIsOpen);
       this.setState({
         lightboxIsOpen: false,
         selectExpandNode: selectedNode
@@ -352,7 +407,6 @@ class App extends Component {
     const unlisten = history.listen((location, action) => {
       this.handleHistory(location, action);
     });
-    console.log('will mount');
     this.setState({
       unlisten,
       history,
@@ -383,8 +437,10 @@ class App extends Component {
 
           <div className="taviewer-detail">
             <TA98ViewerDetail
-              node={this.state.selectExpandNode}
-              wpImageIndex={this.props.wpImageIndex} />
+              openLightbox={this.openLightbox}
+              closeLightbox={this.closeLightbox}
+              lightboxIsOpen={this.state.lightboxIsOpen}
+              node={this.state.selectExpandNode} />
           </div>
           <div className="taviewer-tree">
             <TA98TreeViewer
