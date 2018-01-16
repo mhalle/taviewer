@@ -50,6 +50,10 @@ html, body root, .taviewer {
     border-bottom: 1px solid #dddddd;
   }
 
+  .taviewer-tree {
+    padding: 10px;
+    flex: 1.5;
+  }
 
 @media (max-width: 700px) {
   .taviewer-header {
@@ -132,7 +136,8 @@ html, body root, .taviewer {
   overflow-y: scroll;
   padding: 5px;
   padding-left: 15px;
-  flex: 0.8;
+.taviewer-tree {
+  overflow-y: scroll;
 }
 
 }
