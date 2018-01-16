@@ -112,16 +112,17 @@ class TAViewerDetailLightbox extends Component {
 }
 
 function getWikipediaImageInfo(titles, wikipediaCache) {
-  if(!titles || titles.length === 0) {
-    return []
+  if (!titles || titles.length === 0) {
+    return [];
   }
   let imageInfo = [];
   for (let wikiTitle of titles) {
     const wikiInfo = _.get(wikipediaCache, wikiTitle, null);
-    if (wikiInfo && wikiInfo.images) {
+    if (wikiInfo && wikiInfo.imageInfo) {
       imageInfo = _.union(imageInfo, wikiInfo.imageInfo);
     }
   }
+
   return imageInfo;
 }
 
@@ -291,7 +292,6 @@ class TA98ViewerDetail extends Component {
     const siteCount = this.getWikipediaArticleCount(wdEntityIDs);
     const wikipediaTitles = _.map(this.getWikidataWikipediaUrls(wdEntityIDs), 0);
     let imageInfo = getWikipediaImageInfo(wikipediaTitles, wikipediaCache);
-
     return (
       <div>
         <wikidata.Wikidata entityIDs={wdEntityIDs} onValue={this.updateWikidataCache} />
@@ -503,7 +503,7 @@ class Complete extends Component {
 
       this.setState({
         selectedNode,
-        searchString: selectedNode[1]
+        
       });
       if (this.props.onSelect) {
         this.props.onSelect(selectedNode);
@@ -529,10 +529,12 @@ class Complete extends Component {
       <AutoComplete
         showSearch
         allowClear
+        optionLabelProp="value"
         ref="autocomplete"
         value={this.state.searchString}
         onSelect={this.onSelect}
-        onSearch={this.handleSearch} placeholder="search">
+        onSearch={this.handleSearch}
+        placeholder="search (e.g. thalamus)">
         {children}
       </AutoComplete>
     )
