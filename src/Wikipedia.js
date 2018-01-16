@@ -68,8 +68,7 @@ class Wikipedia extends Component {
             return  filterBogusImages(imageInfo);
         }).then(imageInfo => {
             const wikiInfo = { 
-                imageInfo: imageInfo,
-                images: _.map(imageInfo, 'url')
+                imageInfo: imageInfo
             };
             this.setState({
                 cache: _.assign({}, this.state.cache, { [wikiTitle]: wikiInfo }),
