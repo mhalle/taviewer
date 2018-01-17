@@ -96,7 +96,7 @@ class TAViewerDetailLightbox extends Component {
     return (
       <div>
         <Lightbox
-          imagePadding={100}
+          imagePadding={80}
           wrapperClassName="taviewer-lightbox"
           mainSrc={imageInfo[currentImage].url}
           nextSrc={imageInfo[(currentImage + 1) % nImages].url}
@@ -503,7 +503,7 @@ class Complete extends Component {
 
       this.setState({
         selectedNode,
-        
+        searchString: null
       });
       if (this.props.onSelect) {
         this.props.onSelect(selectedNode);
