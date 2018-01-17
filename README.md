@@ -29,4 +29,4 @@ I urge the IFAA to make these compelling, useful standards in a machine-readable
 
 ## Funding
 
-TAViewer is part of the Open Anatomy project, which is in turn part of the Neuroimaging Analysis Center (NAC), an NIH-funded national resource center dedicated to understanding the human brain through imaging (NIH grant P41EB015902).
+TAViewer is part of the Open Anatomy project, which is in turn part of the [Neuroimaging Analysis Center (NAC)](http://nac.spl.harvard.edu/), an NIH-funded national resource center dedicated to understanding the human brain through imaging (NIH grant P41EB015902).
