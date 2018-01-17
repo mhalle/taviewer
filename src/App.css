@@ -102,7 +102,7 @@ html, body root, .taviewer {
   }
 
   .taviewer-title {
-    flex: 0.8;
+    flex: 0.9;
     padding-top: 20px;
     padding-left: 15px;
   }
