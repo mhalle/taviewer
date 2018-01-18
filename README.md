@@ -27,6 +27,8 @@ It appears that later atlases from the IFAA such as [Terminologia Neuroanatomica
 
 I urge the IFAA to make these compelling, useful standards in a machine-readable form so they can be adopted and used by the widest possible community.
 
+TAViewer itself is licensed under the MIT License.
+
 ## Funding
 
 TAViewer is part of the Open Anatomy project, which is in turn part of the [Neuroimaging Analysis Center (NAC)](http://nac.spl.harvard.edu/), an NIH-funded national resource center dedicated to understanding the human brain through imaging (NIH grant P41EB015902).
