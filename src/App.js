@@ -3,7 +3,10 @@ import './App.css';
 import _ from 'lodash';
 import prefix_match from './prefix-match';
 import createHistory from 'history/createBrowserHistory';
-import { Collapse, Tree, AutoComplete, Icon, Menu, Button } from 'antd';
+import Collapse from 'antd/lib/collapse';
+import Tree from 'antd/lib/tree';
+import AutoComplete from 'antd/lib/auto-complete';
+import Button from 'antd/lib/button';
 import queryString from 'query-string';
 import wikidata from './Wikidata';
 import Wikipedia from './Wikipedia';
@@ -26,9 +29,9 @@ function TAViewerDetailLinks(props) {
     <div className="taviewer-detail-row">
       <div className="taviewer-detail-key">{label}:</div>
       <div className="taviewer-detail-value">
-        {value.map(x => {
+        {value.map((x, i) => {
           let href = `${baseUrl}${encodeURIComponent(x)}`;
-          return <div><a href={href} target={target}>{x}</a></div>;
+          return <div key={i}><a href={href} target={target}>{x}</a></div>;
         })}
       </div>
     </div>
@@ -175,22 +178,25 @@ class TA98ViewerDetail extends Component {
       return null;
     }
 
-    let claimValue = null;
+    let allClaimValues = [];
     for (let entity of validEntities) {
-      claimValue = wikidata.getEntityClaimValues(entity, propId);
-      if (claimValue !== null) {
-        break;
+      let claimValues = wikidata.getEntityClaimValues(entity, propId);
+      if(claimValues) { 
+        allClaimValues = _.union(allClaimValues, claimValues);
       }
     }
-    if (claimValue === null) {
+    if(!allClaimValues.length) {
       return null;
     }
-    let displayValue = urlPrefix ? <a href={urlPrefix + claimValue} target='_blank'>{claimValue}</a> :
-      claimValue;
+    let displayValues = allClaimValues;
+    if(urlPrefix) {
+      displayValues = _.map(allClaimValues, claimValue => 
+          <a href={urlPrefix + claimValue} target='_blank'>{claimValue}</a>);
+    }
 
     return (<div key={propId} className="taviewer-detail-row">
       <div className="taviewer-detail-key">{propLabel}:</div>
-      <div className="taviewer-detail-value">{displayValue}</div>
+      <div className="taviewer-detail-value">{displayValues.map((x, i)=><div key={i}>{x}</div>)}</div>
     </div>);
 
   }
@@ -315,7 +321,7 @@ class TA98ViewerDetail extends Component {
         {this.renderWikidataProperty(wdEntityIDs,
           'P696',
           "Neurolex ID", 'http://neurolex.org/wiki/')}
-          
+
         <Collapse bordered={false}>
           {imageInfo.length > 0 ?
             <Panel header={"Wikipedia images (" + imageInfo.length + ")"}>
