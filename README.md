@@ -25,7 +25,7 @@ Despite my best efforts to find out the licensing terms of the online content of
 
 It appears that later atlases from the IFAA such as [Terminologia Neuroanatomica (TNA)](http://fipat.library.dal.ca/tna/) fall under a Creative Commons Attribution-NoDerivatives 4.0 International License, with individual terms being public domain.  Unfortunately, the TNA is currently only available to the general public as PDF files rather than as an accessible database.
 
-I urge the IFAA to make these compelling, useful standards in a machine-readable form so they can be adopted and used by the widest possible community.
+I urge the IFAA to make these compelling, useful standards available in a machine-readable form so they can be adopted and used by the widest possible community.
 
 TAViewer itself is licensed under the MIT License.
 
