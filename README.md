@@ -1,5 +1,3 @@
-# TAViewer
-
 ![TAViewer Screenshot](https://raw.githubusercontent.com/mhalle/taviewer/master/screenshot/taviewer1.png)
 
 **[http://ta98.openanatomy.org/](http://ta98.openanatomy.org/)**
