@@ -2,14 +2,15 @@
 
 **[http://ta98.openanatomy.org/](http://ta98.openanatomy.org/)**
 
-TAViewer is a web-based anatomy atlas term viewer based on the Terminologia Anatomica, or TA98, standard created by the  Federative Committee on Anatomical Terminoloaddedgy (FCAT) and the 
-[International Federation of Associations of Anatomists (IFAA)](http://www.ifaa.net/). It is currently maintained by the [Federative International Programme for Anatomical Terminology (FIPAT)](http:/http://fipat.library.dal.ca/).
+TAViewer is a web-based anatomy atlas term viewer based developed by the Open Anatomy Project at the Brigham and Women's Hospital in Boston.  It uses data from Terminologia Anatomica, or TA98, a standard for anatomical naming created by anatomists. It also cross-references TA98 terms with data from Wikipedia and Wikidata.
 
 ## Background
 
-Terminologia Anatomica is the successor to  Nomina Anatomica, published in 1895, which represents the modern standard for the naming of structures within the human body.
+The Terminologia Anatomica standard is the successor to  Nomina Anatomica, published in 1895, which was the first modern standard for the naming of structures within the human body.  The first edition of Terminologia Anatomica, TA98, was published by the  Federative Committee on Anatomical Terminology (FCAT) and the 
+[International Federation of Associations of Anatomists (IFAA)](http://www.ifaa.net/). It is currently maintained by the [Federative International Programme for Anatomical Terminology (FIPAT)](http:/http://fipat.library.dal.ca/).
 
-Unlike other organized collections of anatomical terms, TA98 and its sister standards are organized around anatomical principles rather than ontological ones.  This makes TA98 an excellent tool for labeling and understanding the organization of the human body. 
+
+Unlike other organized collections of anatomical terms, TA98 and its sister standards are organized around anatomical principles rather than ontological ones.  This makes TA98 an excellent tool for labeling and understanding the organization of the human body in a way that makes sense to physicians.
 
 Unfortunately, TA98 is primarily available in book form, which greatly limits its use for digital purposes.  There is an online viewer for the standard at the [IFAA site at the University of Fribourg](https://www.unifr.ch/ifaa/). Unfortunately, this site  has obsolete Flash-based hierarchy viewers that no longer work on modern browsers. 
 
