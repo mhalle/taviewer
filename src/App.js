@@ -305,12 +305,16 @@ class TA98ViewerDetail extends Component {
           value={wikipediaTitles} baseUrl={WikipediaBaseUrl} target="_blank" />
         <TAViewerDetailLinks label="Wikidata"
           value={node[5]} baseUrl={WikidataBaseUrl} target="_blank" />
+
         {this.renderWikidataProperty(wdEntityIDs,
-          'P696',
-          "Neurolex ID", 'http://neurolex.org/wiki/')}
+          'P1402', "FMA ID",
+          'http://fme.biostr.washington.edu/FME/index.jsp?fmaid=')}
         {this.renderWikidataProperty(wdEntityIDs,
           'P486', "Mesh ID",
           'https://meshb.nlm.nih.gov/#/record/ui?ui=')}
+        {this.renderWikidataProperty(wdEntityIDs,
+          'P696',
+          "Neurolex ID", 'http://neurolex.org/wiki/')}
 
         <Collapse bordered={false}>
           {imageInfo.length > 0 ?
