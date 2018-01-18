@@ -28,22 +28,33 @@ html, body root, .taviewer {
 
 .App-title {
   font-size: 1.5em;
+  margin-bottom: 10px;
 }
 
 .taviewer-title h1, h2 {
   font-weight: bold;
+  margin-bottom: 5px;
 }
 
 .taviewer-complete {
   width: 100%;
 }
 
+.taviewer-topheader {
+  display: flex;
+  flex-direction: row; 
+}
+
+.taviewer-bottomheader {
+  display: flex;
+  flex-direction: row; 
+}
 
   .taviewer-header {
     width: 100%;
     padding-bottom: 8px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     border-bottom: 1px solid #dddddd;
   }
 
@@ -53,6 +64,13 @@ html, body root, .taviewer {
   }
 
 @media (max-width: 700px) {
+  .taviewer-menubar {
+    padding-right: 10px;
+  }
+
+  .taviewer-search-spacer {
+    display: none;
+  }
   .taviewer-header {
     flex-direction: column;
   }
@@ -65,7 +83,7 @@ html, body root, .taviewer {
     font-size: 20px;
     padding-bottom: 0px;
   }
-  .taviewer-search {
+  .taviewer-controls {
     flex: 1.5;
     padding-top: 0px;
     padding-left: 10px;
@@ -93,6 +111,10 @@ html, body root, .taviewer {
     flex: 1;
     min-height: 0;
   }
+  .taviewer-search {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 
 }
 
@@ -101,15 +123,18 @@ html, body root, .taviewer {
     position: fixed;
   }
 
+  .taviewer-menubar {
+    padding-right: 20px;
+  }
   .taviewer-title {
     flex: 0.9;
-    padding-top: 20px;
+    padding-top:0px;
     padding-left: 15px;
   }
 
-  .taviewer-search {
+  .taviewer-controls {
     flex: 1.5;
-    padding-top: 30px;
+    padding-top: 5px;
     padding-left: 20px;
     padding-right: 30px;
   }
@@ -132,6 +157,10 @@ html, body root, .taviewer {
   overflow-y: scroll;
 }
 
+.taviewer-search {
+  padding-left: 40px;
+  padding-right: 20px;
+}
 }
 
 .taviewer-search .ant-select {
@@ -270,4 +299,39 @@ body {
 
 .taviewer-lightbox .ril-inner {
   background-color: white;
+}
+
+.taviewer-menubar {
+  display: flex;
+  flex-direction: row;
+  padding-top: 4px;
+  padding-bottom: 0px;
+  justify-content: flex-end;
+  flex: 1.5;
+}
+.taviewer-menubar a {
+  padding-left: 18px;
+  padding-right: 18px;
+  text-decoration: none;
+  font-style: oblique;
+  font-weight: normal;
+}
+
+.taviewer-menubar a:visited {
+  text-decoration: none;
+}
+
+.taviewer-controls {
+  display: flex;
+  flex-direction: column;
+}
+
+.taviewer-search-spacer {
+  flex: 0.9;
+}
+.taviewer-search {
+  display: flex;
+  flex-direction: row;
+  flex:1.5;
+
 }

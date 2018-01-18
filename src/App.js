@@ -3,7 +3,7 @@ import './App.css';
 import _ from 'lodash';
 import prefix_match from './prefix-match';
 import createHistory from 'history/createBrowserHistory';
-import { Collapse, Tree, AutoComplete } from 'antd';
+import { Collapse, Tree, AutoComplete, Icon, Menu, Button } from 'antd';
 import queryString from 'query-string';
 import wikidata from './Wikidata';
 import Wikipedia from './Wikipedia';
@@ -315,7 +315,7 @@ class TA98ViewerDetail extends Component {
         {this.renderWikidataProperty(wdEntityIDs,
           'P696',
           "Neurolex ID", 'http://neurolex.org/wiki/')}
-
+          
         <Collapse bordered={false}>
           {imageInfo.length > 0 ?
             <Panel header={"Wikipedia images (" + imageInfo.length + ")"}>
@@ -427,33 +427,42 @@ class App extends Component {
     return (
       <div className="taviewer">
         <header className="taviewer-header">
-          <div className="taviewer-title">
-            <h1 className="app-title">TA98 Viewer</h1>
+          <div className="taviewer-topheader">
+            <div className="taviewer-title">
+              <h1 className="app-title">TA98 Viewer</h1>
+            </div>
+            <div className="taviewer-menubar">
+              <Button href="https://mhalle.github.io/taviewer" size="small" target="_blank">about...</Button>
+            </div>
           </div>
+          <div className="taviewer-bottomheader">
+          <div className="taviewer-search-spacer"></div>
+
           <div className="taviewer-search">
             <Complete
               className="taviewer-complete"
               data={this.props.ta98Data}
               onSelect={this.selectExpandNode} />
           </div>
+          </div>
         </header>
-        <main className="taviewer-main">
+      <main className="taviewer-main">
 
-          <div className="taviewer-detail">
-            <TA98ViewerDetail
-              openLightbox={this.openLightbox}
-              closeLightbox={this.closeLightbox}
-              lightboxIsOpen={this.state.lightboxIsOpen}
-              node={this.state.selectExpandNode} />
-          </div>
-          <div className="taviewer-tree">
-            <TA98TreeViewer
-              data={this.props.ta98Data}
-              onSelect={this.selectExpandNode}
-              selectExpandNode={this.state.selectExpandNode} />
-          </div>
-        </main>
-      </div>
+        <div className="taviewer-detail">
+          <TA98ViewerDetail
+            openLightbox={this.openLightbox}
+            closeLightbox={this.closeLightbox}
+            lightboxIsOpen={this.state.lightboxIsOpen}
+            node={this.state.selectExpandNode} />
+        </div>
+        <div className="taviewer-tree">
+          <TA98TreeViewer
+            data={this.props.ta98Data}
+            onSelect={this.selectExpandNode}
+            selectExpandNode={this.state.selectExpandNode} />
+        </div>
+      </main>
+      </div >
     );
   }
 }
