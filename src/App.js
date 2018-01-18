@@ -17,6 +17,7 @@ const TreeNode = Tree.TreeNode;
 const Option = AutoComplete.Option;
 const WikipediaBaseUrl = 'https://en.wikipedia.org/wiki/';
 const WikidataBaseUrl = 'https://www.wikidata.org/wiki/'
+const FMABaseUrl = 'http://xiphoid.biostr.washington.edu/fma/fmabrowser-hierarchy.html?fmaid='
 const Panel = Collapse.Panel;
 
 function TAViewerDetailLinks(props) {
@@ -307,14 +308,13 @@ class TA98ViewerDetail extends Component {
         <TAViewerDetailRow label="TA98 ID" value={node[0]} />
         <TAViewerDetailRow label="Latin name" value={node[2]} />
         <TAViewerDetailRow label="Synonyms" value={node[3]} />
+        {node[4] !== null ? <TAViewerDetailLinks label="FMA ID"
+          value={[node[4]]} baseUrl={FMABaseUrl} target="_blank" /> : null}
         <TAViewerDetailLinks label="Wikipedia"
           value={wikipediaTitles} baseUrl={WikipediaBaseUrl} target="_blank" />
         <TAViewerDetailLinks label="Wikidata"
           value={node[5]} baseUrl={WikidataBaseUrl} target="_blank" />
 
-        {this.renderWikidataProperty(wdEntityIDs,
-          'P1402', "FMA ID",
-          'http://fme.biostr.washington.edu/FME/index.jsp?fmaid=')}
         {this.renderWikidataProperty(wdEntityIDs,
           'P486', "Mesh ID",
           'https://meshb.nlm.nih.gov/#/record/ui?ui=')}
