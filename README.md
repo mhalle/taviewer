@@ -1,5 +1,7 @@
 # TAViewer: An anatomy browser based on Terminologia Anatomica (1998)
 
+![TAViewer Screenshot](https://raw.githubusercontent.com/mhalle/taviewer/master/screenshot/taviewer1.png)
+
 **[http://ta98.openanatomy.org/](http://ta98.openanatomy.org/)**
 
 TAViewer is a web-based anatomy atlas term viewer based on the Terminologia Anatomica, or TA98, standard created by the  Federative Committee on Anatomical Terminology (FCAT) and the 
