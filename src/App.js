@@ -182,22 +182,22 @@ class TA98ViewerDetail extends Component {
     let allClaimValues = [];
     for (let entity of validEntities) {
       let claimValues = wikidata.getEntityClaimValues(entity, propId);
-      if(claimValues) { 
+      if (claimValues) {
         allClaimValues = _.union(allClaimValues, claimValues);
       }
     }
-    if(!allClaimValues.length) {
+    if (!allClaimValues.length) {
       return null;
     }
     let displayValues = allClaimValues;
-    if(urlPrefix) {
-      displayValues = _.map(allClaimValues, claimValue => 
-          <a href={urlPrefix + claimValue} target='_blank'>{claimValue}</a>);
+    if (urlPrefix) {
+      displayValues = _.map(allClaimValues, claimValue =>
+        <a href={urlPrefix + claimValue} target='_blank'>{claimValue}</a>);
     }
 
     return (<div key={propId} className="taviewer-detail-row">
       <div className="taviewer-detail-key">{propLabel}:</div>
-      <div className="taviewer-detail-value">{displayValues.map((x, i)=><div key={i}>{x}</div>)}</div>
+      <div className="taviewer-detail-value">{displayValues.map((x, i) => <div key={i}>{x}</div>)}</div>
     </div>);
 
   }
@@ -255,16 +255,21 @@ class TA98ViewerDetail extends Component {
     /// hack here
     const info = validEntities[0];
     const siteInfo = _.sortBy(_.values(info['sitelinks']), 'site');
-    return _.map(siteInfo, v => {
-      return (
-        <div key={v["site"]} className="taviewer-detail-row">
-          <div className="taviewer-detail-key">{v['site'].replace('wiki', '')}:</div>
-          <div className="taviewer-detail-value">
-            <div><a href={wikidata.getSitelinkUrl(v)} target="_blank">{v['title']}</a></div>
+    const markupList = _.map(siteInfo, v => {
+      try {
+        return (
+          <div key={v["site"]} className="taviewer-detail-row">
+            <div className="taviewer-detail-key">{v['site'].replace('wiki', '')}:</div>
+            <div className="taviewer-detail-value">
+              <div><a href={wikidata.getSitelinkUrl(v)} target="_blank">{v['title']}</a></div>
+            </div>
           </div>
-        </div>
-      )
+        )
+      } catch(err) {
+        return undefined;
+      }
     })
+    return _.compact(markupList);
   }
 
   getWikidataWikipediaUrls(ids) {
@@ -442,32 +447,32 @@ class App extends Component {
             </div>
           </div>
           <div className="taviewer-bottomheader">
-          <div className="taviewer-search-spacer"></div>
+            <div className="taviewer-search-spacer"></div>
 
-          <div className="taviewer-search">
-            <Complete
-              className="taviewer-complete"
-              data={this.props.ta98Data}
-              onSelect={this.selectExpandNode} />
-          </div>
+            <div className="taviewer-search">
+              <Complete
+                className="taviewer-complete"
+                data={this.props.ta98Data}
+                onSelect={this.selectExpandNode} />
+            </div>
           </div>
         </header>
-      <main className="taviewer-main">
+        <main className="taviewer-main">
 
-        <div className="taviewer-detail">
-          <TA98ViewerDetail
-            openLightbox={this.openLightbox}
-            closeLightbox={this.closeLightbox}
-            lightboxIsOpen={this.state.lightboxIsOpen}
-            node={this.state.selectExpandNode} />
-        </div>
-        <div className="taviewer-tree">
-          <TA98TreeViewer
-            data={this.props.ta98Data}
-            onSelect={this.selectExpandNode}
-            selectExpandNode={this.state.selectExpandNode} />
-        </div>
-      </main>
+          <div className="taviewer-detail">
+            <TA98ViewerDetail
+              openLightbox={this.openLightbox}
+              closeLightbox={this.closeLightbox}
+              lightboxIsOpen={this.state.lightboxIsOpen}
+              node={this.state.selectExpandNode} />
+          </div>
+          <div className="taviewer-tree">
+            <TA98TreeViewer
+              data={this.props.ta98Data}
+              onSelect={this.selectExpandNode}
+              selectExpandNode={this.state.selectExpandNode} />
+          </div>
+        </main>
       </div >
     );
   }
