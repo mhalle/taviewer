@@ -24,7 +24,7 @@ const BogusImageRe = RegExp(
     '(.*Gray298.*)|' +
     '(.*Skeleton_woman_back.jpg.*)' + 
     '(.*Anatomy_posture_and_body_mechanics.*)' +
-    '(.DAB_list_gray.*)'
+    '(.*DAB_list_gray.*)'
 );
 
 function filterBogusImages(imageInfo) {
