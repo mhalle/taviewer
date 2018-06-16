@@ -27,25 +27,18 @@ function getWikipedia(entity, wiki) {
 }
 
 class Wikidata extends Component {
-    state = {
-        cache: {},
-        pending: {}
-    }
-
+    pending = {};
+    cache = {};
     onValue = (id, e) => {
         if(this.props.onValue) {
             this.props.onValue(id, e);
         }
     }
     wikidataEntityQuery(entityID) {
-        let pendingMod = {
-            [entityID]: true
-        };
-        this.setState({pending: _.assign({}, this.state.pending, pendingMod)});
+        this.pending[entityID] = true;
 
         const queryUrl = wdk.getEntities([entityID], null,
             ['labels', 'descriptions', 'aliases', 'sitelinks', 'claims']);
-        pendingMod[entityID] = true;
         fetch(queryUrl)
             .then(res => {
                 if (!res.ok) {
@@ -57,24 +50,14 @@ class Wikidata extends Component {
                 return doc['entities'][entityID];
             })
             .then(entity => {
-                const pendingMod = {
-                    [entityID]: false
-                };
-                const cacheMod = {
-                    [entityID]: entity
-                };
-                this.setState({ 
-                    cache: _.assign({}, this.state.cache, cacheMod),
-                    pending: _.assign({}, this.state.pending, pendingMod)
-                });
+                this.pending[entityID] = false;
+                this.cache[entityID] = entity;
+
                 this.onValue(entityID, entity);
                 return entity;
 
             }).catch((err) => {
-                const pendingMod = {
-                    [entityID]: false
-                };
-                this.setState({pending: _.assign({}, this.state.pending, pendingMod)});
+                this.pending[entityID] = false;
             });
     }
 
@@ -85,17 +68,17 @@ class Wikidata extends Component {
         });
     }
 
-    componentWillReceiveProps(newProps) {
-        if(_.isEqual(newProps, this.props)) {
+    componentDidUpdate(prevProps) {
+        if(_.isEqual(prevProps, this.props)) {
             return;
         }
-        const { entityIDs } = newProps;
+        const { entityIDs } = this.props;
         _.forEach(entityIDs, entityID => {
-            if (this.state.pending[entityID]){
+            if (this.pending[entityID]){
                 return;
             }
-            if (_.has(this.state.cache, entityID)) {
-                setTimeout(() => this.onValue(entityID, this.state.cache[entityID]), 1);
+            if (_.has(this.cache, entityID)) {
+                setTimeout(() => this.onValue(entityID, this.cache[entityID]), 1);
                 return null;
             }
             setTimeout(this.wikidataEntityQuery(entityID), 1);

@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import wikipediaBlacklist from './WikipediaImageBlacklist';
 import { Component } from 'react';
 
 const BogusImageRe = RegExp(wikipediaBlacklist.join('|'));
@@ -19,10 +20,8 @@ function getWikipediaImageinfoUrl(title, thumbwidth, thumbheight) {
 }
 
 class Wikipedia extends Component {
-    state = {
-        cache: {},
-        pending: {}
-    }
+    pending = {};
+    cache = {};
 
     onValue = (id, e) => {
         if (this.props.onValue) {
@@ -30,9 +29,8 @@ class Wikipedia extends Component {
         }
     }
 
-
     wikipediaQuery(wikiTitle) {
-        this.setState({ pending: _.assign({}, this.state.pending, { [wikiTitle]: true }) });
+        this.pending[wikiTitle] = true;
 
         const searchUrl = getWikipediaImageinfoUrl(wikiTitle, 256, 256);
         fetch(searchUrl).then(res => {
@@ -48,13 +46,12 @@ class Wikipedia extends Component {
             const wikiInfo = {
                 imageInfo: imageInfo
             };
-            this.setState({
-                cache: _.assign({}, this.state.cache, { [wikiTitle]: wikiInfo }),
-                pending: _.assign({}, this.state.pending, { [wikiTitle]: false })
-            });
+            this.cache[wikiTitle] = wikiInfo;
+            this.pending[wikiTitle] = false;
+
             this.onValue(wikiTitle, wikiInfo);
         }).catch(err => {
-            this.setState({ pending: _.assign({}, this.state.pending, { [wikiTitle]: false }) });
+            this.pending[wikiTitle] = false;
             throw err;
         });
     }
@@ -66,17 +63,17 @@ class Wikipedia extends Component {
         });
     }
 
-    componentWillReceiveProps(newProps) {
-        if (_.isEqual(newProps, this.props)) {
+    componentDidUpdate(prevProps) {
+        if (_.isEqual(prevProps, this.props)) {
             return;
         }
-        const { wikiTitles } = newProps;
+        const { wikiTitles } = this.props;
         _.forEach(wikiTitles, wikiTitle => {
-            if (this.state.pending[wikiTitle]) {
+            if (this.pending[wikiTitle]) {
                 return;
             }
-            if (_.has(this.state.cache, wikiTitle)) {
-                setTimeout(() => this.onValue(wikiTitle, this.state.cache[wikiTitle]), 1);
+            if (_.has(this.cache, wikiTitle)) {
+                setTimeout(() => this.onValue(wikiTitle, this.cache[wikiTitle]), 1);
                 return null;
             }
             setTimeout(this.wikipediaQuery(wikiTitle), 1);
