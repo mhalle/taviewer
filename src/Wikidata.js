@@ -6,31 +6,31 @@ import { Component } from 'react';
 const getSitelinkUrl = wdk.getSitelinkUrl;
 
 
-function getEntityClaimValues(entity, propId){
+function getEntityClaimValues(entity, propId) {
     const claimEntry = _.get(entity, ['claims', propId], null);
     if (!claimEntry) {
         return null;
     }
-    const values = _.compact(_.map(claimEntry, valueInfo => 
-                    _.get(valueInfo, ['mainsnak', 'datavalue', 'value'], null)));
+    const values = _.compact(_.map(claimEntry, valueInfo =>
+        _.get(valueInfo, ['mainsnak', 'datavalue', 'value'], null)));
     return values;
 }
 
 function getWikipedia(entity, wiki) {
     wiki = wiki || 'enwiki';
-   const wikiEntry = _.get(entity, `sitelinks.${wiki}`, null);
-   if(wikiEntry === null) {
-       return null;
-   }
-   const wikiUrl = wdk.getSitelinkUrl(wikiEntry);
-   return [wikiEntry.title, wikiUrl];
+    const wikiEntry = _.get(entity, `sitelinks.${wiki}`, null);
+    if (wikiEntry === null) {
+        return null;
+    }
+    const wikiUrl = wdk.getSitelinkUrl(wikiEntry);
+    return [wikiEntry.title, wikiUrl];
 }
 
 class Wikidata extends Component {
     pending = {};
     cache = {};
     onValue = (id, e) => {
-        if(this.props.onValue) {
+        if (this.props.onValue) {
             this.props.onValue(id, e);
         }
     }
@@ -69,12 +69,12 @@ class Wikidata extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(_.isEqual(prevProps, this.props)) {
+        if (_.isEqual(prevProps, this.props)) {
             return;
         }
         const { entityIDs } = this.props;
         _.forEach(entityIDs, entityID => {
-            if (this.pending[entityID]){
+            if (this.pending[entityID]) {
                 return;
             }
             if (_.has(this.cache, entityID)) {
@@ -90,7 +90,7 @@ class Wikidata extends Component {
     }
 }
 export default {
-    Wikidata, 
+    Wikidata,
     getWikipedia,
     getEntityClaimValues,
     getSitelinkUrl

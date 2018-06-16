@@ -244,117 +244,117 @@ class TAViewerDetail extends Component {
 
 function DetailLinks(props) {
     const { label, baseUrl, value, target } = props;
-  
+
     if (value === null || value.length === 0) {
-      return null;
+        return null;
     }
     return (
-      <div className="taviewer-detail-row">
-        <div className="taviewer-detail-key">{label}:</div>
-        <div className="taviewer-detail-value">
-          {value.map((x, i) => {
-            let href = `${baseUrl}${encodeURIComponent(x)}`;
-            return <div key={i}><a href={href} target={target}>{x}</a></div>;
-          })}
+        <div className="taviewer-detail-row">
+            <div className="taviewer-detail-key">{label}:</div>
+            <div className="taviewer-detail-value">
+                {value.map((x, i) => {
+                    let href = `${baseUrl}${encodeURIComponent(x)}`;
+                    return <div key={i}><a href={href} target={target}>{x}</a></div>;
+                })}
+            </div>
         </div>
-      </div>
     )
-  }
+}
 
 
-  function DetailRow(props) {
+function DetailRow(props) {
     let label = props.label;
     let value = props.value;
-  
+
     if (value === null || (_.isArray(value) && value.length === 0)) {
-      return null;
+        return null;
     }
-  
+
     if (_.isArray(value)) {
-      return (
-        <div className="taviewer-detail-row">
-          <div className="taviewer-detail-key">{label}:</div>
-          <div className="taviewer-detail-value">
-            {value.map(x => <div key={x}>{x}</div>)}
-          </div>
-        </div>
-      )
+        return (
+            <div className="taviewer-detail-row">
+                <div className="taviewer-detail-key">{label}:</div>
+                <div className="taviewer-detail-value">
+                    {value.map(x => <div key={x}>{x}</div>)}
+                </div>
+            </div>
+        )
     }
     return (
-      <div className="taviewer-detail-row">
-        <div className="taviewer-detail-key">{label}:</div>
-        <div className="taviewer-detail-value">
-          {value}
+        <div className="taviewer-detail-row">
+            <div className="taviewer-detail-key">{label}:</div>
+            <div className="taviewer-detail-value">
+                {value}
+            </div>
         </div>
-      </div>
     )
-  }
-  
-  class DetailGallery extends Component {
+}
+
+class DetailGallery extends Component {
     render() {
-      let imageInfo = this.props.imageInfo;
-      if (!imageInfo) { return null };
-      return (
-        <Gallery
-          onClick={this.props.onClick}
-          photos={imageInfo.map(x => ({ src: x.thumburl, width: x.thumbwidth, height: x.thumbheight }))} />
-      );
+        let imageInfo = this.props.imageInfo;
+        if (!imageInfo) { return null };
+        return (
+            <Gallery
+                onClick={this.props.onClick}
+                photos={imageInfo.map(x => ({ src: x.thumburl, width: x.thumbwidth, height: x.thumbheight }))} />
+        );
     }
-  }
-  class DetailLightbox extends Component {
+}
+class DetailLightbox extends Component {
     state = {
-      currentImage: 0
+        currentImage: 0
     }
-  
+
     gotoPrevImage = () => {
-      const { imageInfo, currentImage } = this.props;
-      const nImages = imageInfo.length;
-      this.props.setCurrentImage((currentImage - 1 + nImages) % nImages);
+        const { imageInfo, currentImage } = this.props;
+        const nImages = imageInfo.length;
+        this.props.setCurrentImage((currentImage - 1 + nImages) % nImages);
     }
-  
+
     gotoNextImage = () => {
-      const { imageInfo, currentImage } = this.props;
-      const nImages = imageInfo.length;
-      this.props.setCurrentImage((currentImage + 1) % nImages)
+        const { imageInfo, currentImage } = this.props;
+        const nImages = imageInfo.length;
+        this.props.setCurrentImage((currentImage + 1) % nImages)
     }
-  
+
     render() {
-      const { imageInfo, currentImage } = this.props;
-      const nImages = imageInfo.length;
-      return (
-        <div>
-          <Lightbox
-            imagePadding={80}
-            wrapperClassName="taviewer-lightbox"
-            mainSrc={imageInfo[currentImage].url}
-            nextSrc={imageInfo[(currentImage + 1) % nImages].url}
-            prevSrc={imageInfo[(currentImage + nImages - 1) % nImages].url}
-  
-            onMovePrevRequest={this.gotoPrevImage}
-            onMoveNextRequest={this.gotoNextImage}
-            images={imageInfo.map(x => ({ src: x.url }))}
-            onCloseRequest={this.props.onClose} />
-        </div>
-      );
+        const { imageInfo, currentImage } = this.props;
+        const nImages = imageInfo.length;
+        return (
+            <div>
+                <Lightbox
+                    imagePadding={80}
+                    wrapperClassName="taviewer-lightbox"
+                    mainSrc={imageInfo[currentImage].url}
+                    nextSrc={imageInfo[(currentImage + 1) % nImages].url}
+                    prevSrc={imageInfo[(currentImage + nImages - 1) % nImages].url}
+
+                    onMovePrevRequest={this.gotoPrevImage}
+                    onMoveNextRequest={this.gotoNextImage}
+                    images={imageInfo.map(x => ({ src: x.url }))}
+                    onCloseRequest={this.props.onClose} />
+            </div>
+        );
     }
-  }
+}
 
 
 function getWikipediaImageInfo(titles, wikipediaCache) {
     if (!titles || titles.length === 0) {
-      return [];
+        return [];
     }
     let imageInfo = [];
     for (let wikiTitle of titles) {
-      const wikiInfo = _.get(wikipediaCache, wikiTitle, null);
-      if (wikiInfo && wikiInfo.imageInfo) {
-        imageInfo = _.union(imageInfo, wikiInfo.imageInfo);
-      }
+        const wikiInfo = _.get(wikipediaCache, wikiTitle, null);
+        if (wikiInfo && wikiInfo.imageInfo) {
+            imageInfo = _.union(imageInfo, wikiInfo.imageInfo);
+        }
     }
-  
+
     return imageInfo;
-  }
-  
-  
+}
+
+
 
 export default TAViewerDetail;
