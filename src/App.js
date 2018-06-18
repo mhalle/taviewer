@@ -109,7 +109,7 @@ class App extends Component {
         <main className="taviewer-main">
 
           <div className="taviewer-detail">
-            <TAViewerDetail
+            <TADetailViewer
               openLightbox={this.openLightbox}
               closeLightbox={this.closeLightbox}
               lightboxIsOpen={this.state.lightboxIsOpen}
