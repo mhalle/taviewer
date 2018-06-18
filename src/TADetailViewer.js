@@ -74,7 +74,12 @@ class TADetailViewer extends Component {
             <div className="taviewer-detail-key">{label}:</div>
             <div className="taviewer-detail-value">
                 {grayInfo.map((g, i) => {
-                    return <div key={i}><a href={g.url} target={target}>pg. {g.page}</a></div>;
+                    const pageText = g.page === null ? '' : `page ${g.page}`
+                    return g.url ? 
+                        <div key={i}><a href={g.url} target={target}>{pageText}</a></div>
+                        :
+                        <span>{pageText}</span>;
+
                 })}
             </div>
         </div>
