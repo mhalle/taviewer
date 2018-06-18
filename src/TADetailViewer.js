@@ -74,13 +74,12 @@ class TADetailViewer extends Component {
             <div className="taviewer-detail-key">{label}:</div>
             <div className="taviewer-detail-value">
                 {grayInfo.map((g, i) => {
-                    return <div key={i}><a href={g.url} target={target}>{g.page}</a></div>;
+                    return <div key={i}><a href={g.url} target={target}>pg. {g.page}</a></div>;
                 })}
             </div>
         </div>
         );
     }
-
 
     renderWikidataProperty(ids, propId, propLabel, urlPrefix) {
         if (!ids || ids.length === 0) {
