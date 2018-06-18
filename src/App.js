@@ -7,8 +7,15 @@ import queryString from 'query-string';
 
 import TAComplete from './TAComplete';
 import TATreeViewer from './TATreeViewer';
-import TAViewerDetail from './TAViewerDetail';
+import TADetailViewer from './TADetailViewer';
 
+function About() {
+  return (<Button
+    href="https://mhalle.github.io/taviewer"
+    size="small"
+    target="_blank">about...</Button>
+  )
+}
 
 class App extends Component {
   history = null;
@@ -92,7 +99,7 @@ class App extends Component {
               <h1 className="app-title">TA98 Viewer</h1>
             </div>
             <div className="taviewer-menubar">
-              <Button href="https://mhalle.github.io/taviewer" size="small" target="_blank">about...</Button>
+              <About />
             </div>
           </div>
           <div className="taviewer-bottomheader">
