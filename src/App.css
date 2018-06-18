@@ -19,12 +19,6 @@ html, body root, .taviewer {
   max-width: 100%;
   height: auto;
 }
-/*
-  .taviewer > * {
-   	border: 1px solid goldenrod;
-    
-  }
-  */
 
 .App-title {
   font-size: 1.5em;
@@ -60,7 +54,7 @@ html, body root, .taviewer {
 
   .taviewer-tree {
     padding: 10px;
-    flex: 1.5;
+    flex: 1
   }
 
 @media (max-width: 700px) {
@@ -96,9 +90,7 @@ html, body root, .taviewer {
     padding-left: 15px;
     flex: 0.2;
     border-bottom: 1px solid #dddddd;
-
   }
-
   .taviewer-detail h2 {
     font-size: 16px;
     padding-bottom: 0px;
@@ -151,7 +143,7 @@ html, body root, .taviewer {
   overflow-y: scroll;
   padding: 5px;
   padding-left: 15px;
-  flex: 0.9;
+  flex: 0.7;
 }
 .taviewer-tree {
   overflow-y: scroll;
@@ -173,17 +165,18 @@ html, body root, .taviewer {
   }
   */
 
-
 .taviewer-detail-row {
-  padding-left: 15px;
+  padding-left: 10px;
   display: flex;
   flex-direction: row;
 }
 
 .taviewer-detail-key {
-  flex: 0 0 100px;
+  font-style: oblique;
+
+  flex: 0 0 140px;
   text-align: left;
-  font-weight: bold;
+  font-weight: normal;
   padding-right: 10px;
   color: #000000;
 }
@@ -191,6 +184,23 @@ html, body root, .taviewer {
 .taviewer-detail-value {
   flex: 1;
   padding-right: 20px;
+  color: #000000;
+}
+
+.taviewer-detail-value  a:link,
+.taviewer-detail-value a:visited,
+.taviewer-detail-value a:hover,
+.taviewer-detail-value a:active {
+  text-decoration: none;
+}
+
+
+.taviewer-detail-key-nested {
+  font-style: oblique;
+  flex: 0 0 120px; 
+  text-align: left;
+  font-weight: normal;
+  padding-right: 0px;
   color: #000000;
 }
 
@@ -209,9 +219,8 @@ body {
   color: rgb(0, 0, 0);
 }
 
-
 .taviewer .ant-tree-title {
-  color: rgb(0, 0, 0);
+  color: rgb(41, 41, 41);
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
@@ -257,9 +266,6 @@ body {
   background-color: #00f;
 
 }
-.slick-dots {
-
-}
 
 #lightboxBackdrop {
   background: rgb(200, 200, 200);
@@ -275,7 +281,7 @@ body {
   padding-bottom: 0px;
   padding-left: 15px;
   font-weight: bold;
-  color: rgb(0, 0, 0);
+  /* color: rgb(27, 27, 27); */
 }
 .taviewer .ant-collapse-borderless > 
   .ant-collapse-item > 
@@ -327,11 +333,11 @@ body {
 }
 
 .taviewer-search-spacer {
-  flex: 0.9;
+  flex: 0.75;
 }
 .taviewer-search {
   display: flex;
   flex-direction: row;
-  flex:1.5;
+  flex:1;
 
 }
