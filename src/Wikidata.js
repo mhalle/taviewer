@@ -6,6 +6,7 @@ import { Component } from 'react';
 const getSitelinkUrl = wdk.getSitelinkUrl;
 
 
+
 function getEntityClaimValues(entity, propId) {
     const claimEntry = _.get(entity, ['claims', propId], null);
     if (!claimEntry) {
@@ -26,6 +27,18 @@ function getWikipedia(entity, wiki) {
     return [wikiEntry.title, wikiUrl];
 }
 
+function getGraysAnatomyInfo(entityData) {
+    const info = _.chain(entityData)
+        .get(['claims', 'P1343'])
+        .filter([['mainsnak', 'datavalue', 'value', 'numeric-id'], 19558994])
+        .map(x => ({
+            page: _.get(x, ['qualifiers', 'P304', 0, 'datavalue', 'value']),
+            url: _.get(x, ['references', 0, 'snaks', 'P854', 0, 'datavalue', 'value'])
+        }))
+        .value();
+    return info;
+}
+
 class Wikidata extends Component {
     pending = {};
     cache = {};
@@ -38,7 +51,7 @@ class Wikidata extends Component {
         this.pending[entityID] = true;
 
         const queryUrl = wdk.getEntities([entityID], null,
-            ['labels', 'descriptions', 'aliases', 'sitelinks', 'claims']);
+            null);
         fetch(queryUrl)
             .then(res => {
                 if (!res.ok) {
@@ -93,5 +106,6 @@ export default {
     Wikidata,
     getWikipedia,
     getEntityClaimValues,
-    getSitelinkUrl
+    getSitelinkUrl,
+    getGraysAnatomyInfo
 };
