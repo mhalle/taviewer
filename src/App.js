@@ -103,30 +103,32 @@ class App extends Component {
             </div>
           </div>
           <div className="taviewer-bottomheader">
-            <div className="taviewer-search-spacer"></div>
-
+           
             <div className="taviewer-search">
               <TAComplete
                 className="taviewer-complete"
                 data={this.props.ta98Data}
                 onSelect={this.selectExpandNode} />
             </div>
+            <div className="taviewer-search-spacer"></div>
+
           </div>
         </header>
         <main className="taviewer-main">
 
+
+          <div className="taviewer-tree">
+            <TATreeViewer
+              data={this.props.ta98Data}
+              onSelect={this.selectExpandNode}
+              selectExpandNode={this.state.selectExpandNode} />
+          </div>
           <div className="taviewer-detail">
             <TADetailViewer
               openLightbox={this.openLightbox}
               closeLightbox={this.closeLightbox}
               lightboxIsOpen={this.state.lightboxIsOpen}
               node={this.state.selectExpandNode} />
-          </div>
-          <div className="taviewer-tree">
-            <TATreeViewer
-              data={this.props.ta98Data}
-              onSelect={this.selectExpandNode}
-              selectExpandNode={this.state.selectExpandNode} />
           </div>
         </main>
       </div >
