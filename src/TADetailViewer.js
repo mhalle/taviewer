@@ -63,7 +63,6 @@ class TADetailViewer extends Component {
         }
         /// hack here
         const info = validEntities[0];
-        console.log('info', info);
         const grayInfo = wikidata.getGraysAnatomyInfo(info);
         if (grayInfo.length === 0){
             return null;
@@ -259,11 +258,12 @@ class TADetailViewer extends Component {
 
                             </div>
                         </Panel> : null}
-                    {languageCount > 0 ?
-                        <Panel header={`Translations (${languageCount})`} >{this.renderWikidataLanguage(wdEntityIDs)}</Panel>
-                        : null}
+
                     {siteCount > 0 ?
                         <Panel header={`Wikipedia sites (${siteCount})`}>{this.renderWikidataWikipedia(wdEntityIDs)}</Panel>
+                        : null}
+                    {languageCount > 0 ?
+                        <Panel header={`Translations (${languageCount})`} >{this.renderWikidataLanguage(wdEntityIDs)}</Panel>
                         : null}
                 </Collapse>
                 {lightboxIsOpen ? <DetailLightbox
