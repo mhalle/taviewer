@@ -245,7 +245,6 @@ class TADetailViewer extends Component {
                 <DetailLinks label="Wikidata"
                     value={node[5]} baseUrl={WikidataBaseUrl} target="_blank" />
     
-                {this.renderWikidataGray(wdEntityIDs, "Gray's Anatomy", "_blank")}
                 {this.renderWikidataProperty(wdEntityIDs,
                     'P486', "Mesh ID",
                     'https://meshb.nlm.nih.gov/#/record/ui?ui=')}
@@ -253,6 +252,8 @@ class TADetailViewer extends Component {
                 {this.renderWikidataProperty(wdEntityIDs,
                     'P696',
                     "Neurolex ID", 'http://neurolex.org/wiki/')}
+
+                {this.renderWikidataGray(wdEntityIDs, "Gray's Anatomy", "_blank")}
 
                 <Collapse bordered={false}>
                     {imageInfo.length > 0 ?
