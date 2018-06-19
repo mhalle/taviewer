@@ -208,7 +208,7 @@ class TADetailViewer extends Component {
     }
 
     render() {
-        const { node, lightboxIsOpen } = this.props;
+        const { node, lightboxIsOpen, language } = this.props;
         const { wikipediaCache } = this.state;
         if (!node) {
             return null;
@@ -225,9 +225,18 @@ class TADetailViewer extends Component {
                 <wikidata.Wikidata entityIDs={wdEntityIDs} onValue={this.updateWikidataCache} />
                 <Wikipedia wikiTitles={wikipediaTitles} onValue={this.updateWikipediaCache} />
 
-                <h2>{node[1]}</h2>
+                {
+                    language === 'English' ?
+                        <h2>{node[1]}</h2> :
+                        <h2>{node[2]}</h2>
+                }
+
                 <DetailRow label="TA98 ID" value={node[0]} />
-                <DetailRow label="Latin name" value={node[2]} />
+                {
+                    language === 'English' ?
+                        <DetailRow label="Latin name" value={node[2]} /> :
+                        <DetailRow label="English name" value={node[1]} />
+                }
                 <DetailRow label="Synonyms" value={node[3]} />
                 {node[4] !== null ? <DetailLinks label="FMA ID"
                     value={[node[4]]} baseUrl={FMABaseUrl} target="_blank" /> : null}

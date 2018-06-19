@@ -8,8 +8,6 @@ import queryString from 'query-string';
 import TAComplete from './TAComplete';
 import TATreeViewer from './TATreeViewer';
 import TADetailViewer from './TADetailViewer';
-import SplitPane from 'react-split-pane';
-
 
 function About() {
   return (<Button
@@ -27,6 +25,7 @@ class App extends Component {
     selectExpandNode: null,
     lightboxIsOpen: false,
     currentImage: 0,
+    language: 'English'
   };
 
   constructor() {
@@ -103,7 +102,7 @@ class App extends Component {
             </div>
             <div className="taviewer-menubar">
             <div className="taviewer-search">
-              <TAComplete
+              <TAComplete language={this.state.language}
                 className="taviewer-complete"
                 data={this.props.ta98Data}
                 onSelect={this.selectExpandNode} />
@@ -114,13 +113,13 @@ class App extends Component {
         </header>
         <main className="taviewer-main">
           <div className="taviewer-tree">
-            <TATreeViewer
+            <TATreeViewer language={this.state.language}
               data={this.props.ta98Data}
               onSelect={this.selectExpandNode}
               selectExpandNode={this.state.selectExpandNode} />
           </div>
           <div className="taviewer-detail">
-            <TADetailViewer
+            <TADetailViewer language={this.state.language}
               openLightbox={this.openLightbox}
               closeLightbox={this.closeLightbox}
               lightboxIsOpen={this.state.lightboxIsOpen}

@@ -20,9 +20,12 @@ class TAComplete extends Component {
 
   handleSearch = (searchString) => {
     let matchingNodes = [];
-    _.forOwn(this.props.data.get_nodes(), (v) => {
-      if (prefix_match(searchString.toLowerCase(), v[1]) ||
-        _.startsWith(v[0], searchString.toUpperCase())) {
+    let { language } = this.props;
+
+    let termIndex = language === 'English' ? 1 : 2;
+    let nodes = _.forOwn(this.props.data.get_nodes(), (v) => {
+      const lc = searchString.toLowerCase();
+      if (prefix_match(lc, v[termIndex])) {
         matchingNodes.push(v);
       }
     })
@@ -45,17 +48,19 @@ class TAComplete extends Component {
   }
 
   render() {
-    let { matchingNodes } = this.state;
+    const { matchingNodes } = this.state;
+    const { language } = this.props;
 
     let children;
-    if (matchingNodes.length > 400) {
+    if (matchingNodes.length > 350) {
       children = <Option
         disabled={true}
         key="TooMany">{matchingNodes.length} matches...</Option>;
     }
     else {
       children = _.map(matchingNodes, m => {
-        return <Option value={m[0]} key={m[0]}>{m[1]}&nbsp;({m[0]})</Option>
+        const labelIndex = language === 'English' ? 1 : 2;
+        return <Option value={m[0]} key={m[0]}>{m[labelIndex]}&nbsp;({m[0]})</Option>
       });
     }
     return (

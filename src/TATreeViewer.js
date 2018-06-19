@@ -49,7 +49,7 @@ class TATreeViewer extends Component {
     }
     render() {
         const { expandedKeys, autoExpandParent, selectedKeys } = this.state;
-
+        const language = this.props.language;
         return (
             <Tree showLine
                 onExpand={this.onExpand}
@@ -58,26 +58,27 @@ class TATreeViewer extends Component {
                 selectedKeys={selectedKeys}
                 onSelect={this.onSelect}
             >
-                {tree_level(this.props.data.tree)}
+                {tree_level(this.props.data.tree, language)}
             </Tree>
         );
     }
 }
 
-function tree_level(node_list) {
+function tree_level(node_list, language="English") {
     if (!node_list) {
         return;
     }
     let sorted_list = _.sortBy(node_list, x => x[1]);
     return (_.map(sorted_list, node => {
-        let title_text = `${node[1]} (${node[0]})`;
+        let title_text = language === 'English' ? node[1] : node[2];
+        let title_label = `${title_text} (${node[0]})`;
         let is_group = node.length === 7;
         return (
             <TreeNode
                 className={is_group ? "taviewer-group" : "taviewer-leaf"}
-                title={title_text}
+                title={title_label}
                 key={node[0]}>
-                {tree_level(node[6])}
+                {tree_level(node[6], language)}
             </TreeNode>
         );
     }));
