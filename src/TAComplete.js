@@ -23,7 +23,7 @@ class TAComplete extends Component {
     let { language } = this.props;
 
     let termIndex = language === 'English' ? 1 : 2;
-    let nodes = _.forOwn(this.props.data.get_nodes(), (v) => {
+    _.forOwn(this.props.data.get_nodes(), (v) => {
       const lc = searchString.toLowerCase();
       if (prefix_match(lc, v[termIndex])) {
         matchingNodes.push(v);
