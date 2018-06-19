@@ -8,11 +8,13 @@ import queryString from 'query-string';
 import TAComplete from './TAComplete';
 import TATreeViewer from './TATreeViewer';
 import TADetailViewer from './TADetailViewer';
+import SplitPane from 'react-split-pane';
+
 
 function About() {
   return (<Button
     href="https://mhalle.github.io/taviewer"
-    size="small"
+    size="default"
     target="_blank">about...</Button>
   )
 }
@@ -92,31 +94,25 @@ class App extends Component {
 
   render() {
     return (
+      
       <div className="taviewer">
         <header className="taviewer-header">
           <div className="taviewer-topheader">
             <div className="taviewer-title">
-              <h1 className="app-title">TA98 Viewer</h1>
+              <h1>TA98 Viewer</h1>
             </div>
             <div className="taviewer-menubar">
-              <About />
-            </div>
-          </div>
-          <div className="taviewer-bottomheader">
-           
             <div className="taviewer-search">
               <TAComplete
                 className="taviewer-complete"
                 data={this.props.ta98Data}
                 onSelect={this.selectExpandNode} />
             </div>
-            <div className="taviewer-search-spacer"></div>
-
+              <About />
+            </div>
           </div>
         </header>
         <main className="taviewer-main">
-
-
           <div className="taviewer-tree">
             <TATreeViewer
               data={this.props.ta98Data}
@@ -131,9 +127,10 @@ class App extends Component {
               node={this.state.selectExpandNode} />
           </div>
         </main>
-      </div >
+      </div>
     );
   }
+
 }
 
 export default App;

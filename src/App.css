@@ -1,4 +1,6 @@
 @import '~antd/dist/antd.css';
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,b3d4fc+100,207cca+100 */
+
 
 html, body root, .taviewer {
   width: 100%;
@@ -25,14 +27,10 @@ html, body root, .taviewer {
   height: auto;
 }
 
-.App-title {
-  font-size: 1.5em;
-  margin-bottom: 10px;
-}
-
 .taviewer-title h1, h2 {
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 5px;
+  color: #252581;
 }
 
 .taviewer-complete {
@@ -44,25 +42,22 @@ html, body root, .taviewer {
   flex-direction: row; 
 }
 
-.taviewer-bottomheader {
-  display: flex;
-  flex-direction: row; 
-}
-
   .taviewer-header {
+    background-color: #e0e0e0;
     width: 100%;
     padding-bottom: 8px;
+    padding-top: 5px;
     display: flex;
     flex-direction: column;
-    border-bottom: 1px solid #dddddd;
+    /* border-bottom: 1px solid #dddddd; */
   }
 
   .taviewer-tree {
     padding: 10px;
-    flex: 1
+    flex: 0.25 1 280px;
   }
 
-@media (max-width: 700px) {
+@media (max-width: 660px) {
   .taviewer-menubar {
     padding-right: 10px;
   }
@@ -70,11 +65,14 @@ html, body root, .taviewer {
   .taviewer-search-spacer {
     display: none;
   }
+  .taviewer-search {
+    flex: 1;
+  }
   .taviewer-header {
     flex-direction: column;
   }
   .taviewer-title {
-    flex: 0.8;
+    flex: 0 0 140px;
     padding-top: 5px;
     padding-left: 10px;
   }
@@ -92,9 +90,10 @@ html, body root, .taviewer {
   .taviewer-detail {
     padding: 0px;
     padding-bottom: 4px;
-    padding-left: 15px;
+    padding-left: 20px;
     flex: 0.2;
     border-bottom: 1px solid #dddddd;
+    order: -1;
   }
   .taviewer-detail h2 {
     font-size: 16px;
@@ -110,7 +109,7 @@ html, body root, .taviewer {
   }
 }
 
-@media (min-width: 700px) {
+@media (min-width: 659px) {
   .taviewer {
     position: fixed;
   }
@@ -119,7 +118,7 @@ html, body root, .taviewer {
     padding-right: 20px;
   }
   .taviewer-title {
-    flex: 0.9;
+    flex: 0 0 200px;
     padding-top:0px;
     padding-left: 15px;
   }
@@ -144,11 +143,15 @@ html, body root, .taviewer {
   padding: 5px;
   padding-left: 15px;
   flex: 1.2;
-}
-.taviewer-tree {
-  overflow-y: scroll;
-}
+  border-left: 1px solid #dddddd;
 
+}
+  .taviewer-tree {
+    overflow-y: scroll;
+  }
+  .taviewer-search {
+    flex: 1;
+  }
 }
 
 .taviewer-search .ant-select {
@@ -216,6 +219,7 @@ body {
 }
 
 .taviewer .ant-tree-title {
+  font-size: 13px;
   color: rgb(41, 41, 41);
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -232,13 +236,16 @@ body {
 }
 
 .taviewer-group {
-  font-weight: bold;
-  color: rgb(0, 0, 200);
-
+  font-weight: 700;
 }
 
-.taviewer-leaf {
+.taviewer-group .ant-tree-title {
+  color: rgb(40, 40, 40);
+}
+.taviewer-leaf .ant-tree-title {
   font-weight: normal;
+  color: rgb(0, 0, 0);
+
 }
 
 .ant-tree li ul {
@@ -277,7 +284,7 @@ body {
   padding-bottom: 0px;
   padding-left: 15px;
   font-weight: bold;
-  /* color: rgb(27, 27, 27); */
+  color: rgb(75, 75, 75);
 }
 .taviewer .ant-collapse-borderless > 
   .ant-collapse-item > 
@@ -334,6 +341,4 @@ body {
 .taviewer-search {
   display: flex;
   flex-direction: row;
-  flex:1;
-
 }
