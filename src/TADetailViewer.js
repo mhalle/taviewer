@@ -64,24 +64,24 @@ class TADetailViewer extends Component {
         /// hack here
         const info = validEntities[0];
         const grayInfo = wikidata.getGraysAnatomyInfo(info);
-        if (grayInfo.length === 0){
+        if (grayInfo.length === 0) {
             return null;
         }
 
         return (
             <div className="taviewer-detail-row">
-            <div className="taviewer-detail-key">{label}:</div>
-            <div className="taviewer-detail-value">
-                {grayInfo.map((g, i) => {
-                    const pageText = g.page === null ? '' : `page ${g.page}`
-                    return g.url ? 
-                        <div key={i}><a href={g.url} target={target}>{pageText}</a></div>
-                        :
-                        <span>{pageText}</span>;
+                <div className="taviewer-detail-key">{label}:</div>
+                <div className="taviewer-detail-value">
+                    {grayInfo.map((g, i) => {
+                        const pageText = g.page === null ? '' : `page ${g.page}`
+                        return g.url ?
+                            <div key={i}><a href={g.url} target={target}>{pageText}</a></div>
+                            :
+                            <span key="pageText">{pageText}</span>;
 
-                })}
+                    })}
+                </div>
             </div>
-        </div>
         );
     }
 
@@ -159,7 +159,7 @@ class TADetailViewer extends Component {
         const info = validEntities[0];
         return _.values(info['sitelinks']).length;
     }
-    
+
     renderWikidataWikipedia(ids) {
         if (!ids || ids.length === 0) {
             return null;
@@ -207,13 +207,14 @@ class TADetailViewer extends Component {
         return wikipediaLinkInfo;
     }
 
+
     render() {
         const { node, lightboxIsOpen, language } = this.props;
         const { wikipediaCache } = this.state;
         if (!node) {
             return null;
         }
-        let wdEntityIDs = node[5];
+        let wdEntityIDs = node.wikiDataId;
 
         const languageCount = this.getWikidataLanguageCount(wdEntityIDs);
         const siteCount = this.getWikipediaArticleCount(wdEntityIDs);
@@ -225,26 +226,31 @@ class TADetailViewer extends Component {
                 <wikidata.Wikidata entityIDs={wdEntityIDs} onValue={this.updateWikidataCache} />
                 <Wikipedia wikiTitles={wikipediaTitles} onValue={this.updateWikipediaCache} />
 
-                {
-                    language === 'English' ?
-                        <h2>{node[1]}</h2> :
-                        <h2>{node[2]}</h2>
-                }
+                <h2>{node.name[language]}</h2>
 
-                <DetailRow label="TA98 ID" value={node[0]} />
+                <div className="taviewer-breadcrumbs">{
+                    getParentNames(node, language)
+                        .slice(1)
+                        .map(x => [
+                            <span style={{ 'white-space': 'normal' }}> / </span>,
+                            <span className="nowrap">{x}</span>
+                        ])
+                }</div>
+
+                <DetailRow label="TA98 ID" value={node.id} />
                 {
-                    language === 'English' ?
-                        <DetailRow label="Latin name" value={node[2]} /> :
-                        <DetailRow label="English name" value={node[1]} />
+                    language === 'en' ?
+                        <DetailRow label="Latin name" value={node.name['la']} /> :
+                        <DetailRow label="English name" value={node.name['en']} />
                 }
-                <DetailRow label="Synonyms" value={node[3]} />
-                {node[4] !== null ? <DetailLinks label="FMA ID"
-                    value={[node[4]]} baseUrl={FMABaseUrl} target="_blank" /> : null}
+                <DetailRow label="Synonyms" value={node.synonyms} />
+                {node.fmaId !== null ? <DetailLinks label="FMA ID"
+                    value={[node.fmaId]} baseUrl={FMABaseUrl} target="_blank" /> : null}
                 <DetailLinks label="Wikipedia"
                     value={wikipediaTitles} baseUrl={WikipediaBaseUrl} target="_blank" />
                 <DetailLinks label="Wikidata"
-                    value={node[5]} baseUrl={WikidataBaseUrl} target="_blank" />
-    
+                    value={node.wikiDataId} baseUrl={WikidataBaseUrl} target="_blank" />
+
                 {this.renderWikidataProperty(wdEntityIDs,
                     'P486', "Mesh ID",
                     'https://meshb.nlm.nih.gov/#/record/ui?ui=')}
@@ -309,7 +315,7 @@ function DetailLinks(props) {
 }
 
 function DetailRow(props) {
-    const {label, value} = props;
+    const { label, value } = props;
 
     if (value === null || (_.isArray(value) && value.length === 0)) {
         return null;
@@ -397,6 +403,19 @@ function getWikipediaImageInfo(titles, wikipediaCache) {
     }
 
     return imageInfo;
+}
+
+function getParentNames(node, lang) {
+    const names = [];
+
+    while (true) {
+        names.push(node.name[lang]);
+        node = node.parent;
+        if (!node) {
+            break;
+        }
+    }
+    return names;
 }
 
 export default TADetailViewer;

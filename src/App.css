@@ -349,3 +349,12 @@ body {
   display: flex;
   flex-direction: row;
 }
+
+.taviewer-breadcrumbs {
+  margin-bottom: 10px;
+  font-size: 12px;
+  line-height: 13px;
+}
+.nowrap {
+    white-space: nowrap;
+}

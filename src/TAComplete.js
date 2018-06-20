@@ -12,9 +12,9 @@ class TAComplete extends Component {
     matchingNodes: [],
     selectedNode: null
   }
-  componentWillMount() {
+  componentDidMount() {
     this.setState({
-      matchingNodes: this.props.data.get_nodes()
+      matchingNodes: this.props.data.getNodes()
     });
   }
 
@@ -22,10 +22,9 @@ class TAComplete extends Component {
     let matchingNodes = [];
     let { language } = this.props;
 
-    let termIndex = language === 'English' ? 1 : 2;
-    _.forOwn(this.props.data.get_nodes(), (v) => {
+    _.forOwn(this.props.data.getNodes(), (v) => {
       const lc = searchString.toLowerCase();
-      if (prefix_match(lc, v[termIndex])) {
+      if (prefix_match(lc, v.name[language])) {
         matchingNodes.push(v);
       }
     })
@@ -35,7 +34,7 @@ class TAComplete extends Component {
 
   onSelect = (v) => {
     if (v) {
-      let selectedNode = this.props.data.get_node_by_id(v);
+      let selectedNode = this.props.data.getNodeById(v);
 
       this.setState({
         selectedNode,
@@ -59,8 +58,7 @@ class TAComplete extends Component {
     }
     else {
       children = _.map(matchingNodes, m => {
-        const labelIndex = language === 'English' ? 1 : 2;
-        return <Option value={m[0]} key={m[0]}>{m[labelIndex]}&nbsp;({m[0]})</Option>
+        return <Option value={m.id} key={m.id}>{m.name[language]}&nbsp;({m.id})</Option>
       });
     }
     return (

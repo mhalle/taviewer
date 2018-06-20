@@ -3,11 +3,23 @@ import './App.css';
 import createHistory from 'history/createBrowserHistory';
 
 import Button from 'antd/lib/button';
+import Select from 'antd/lib/select';
 import queryString from 'query-string';
 
 import TAComplete from './TAComplete';
 import TATreeViewer from './TATreeViewer';
 import TADetailViewer from './TADetailViewer';
+const Option = Select.Option;
+
+function LanguageSelect(props) {
+  return (<Select style={{width:95}} 
+            defaultValue="en"
+            {...props}>
+      <Option value="en">English</Option>
+      <Option value="la">Latin</Option>
+    </Select>
+    )
+}
 
 function About() {
   return (<Button
@@ -25,7 +37,7 @@ class App extends Component {
     selectExpandNode: null,
     lightboxIsOpen: false,
     currentImage: 0,
-    language: 'English'
+    language: 'en'
   };
 
   constructor() {
@@ -45,7 +57,7 @@ class App extends Component {
   }
 
   pushHistory = (n, lightboxOn) => {
-    const uri = n ? `/?id=${n[0]}` : '/';
+    const uri = n ? `/?id=${n.id}` : '/';
     const historyState = lightboxOn ? { lb: 1 } : undefined;
 
     this.history.push(uri, historyState);
@@ -71,8 +83,8 @@ class App extends Component {
 
       const query = queryString.parse(location.search);
       let selectedNode = null;
-      if (query.id && this.props.ta98Data.get_node_by_id(query.id)) {
-        selectedNode = this.props.ta98Data.get_node_by_id(query.id);
+      if (query.id && this.props.ta98Data.getNodeById(query.id)) {
+        selectedNode = this.props.ta98Data.getNodeById(query.id);
       }
       this.setState({
         lightboxIsOpen: false,
@@ -91,6 +103,12 @@ class App extends Component {
     }
   }
 
+  changeLanguage = (language) => {
+    this.setState({
+      language
+    })
+  }
+
   render() {
     return (
       
@@ -107,6 +125,7 @@ class App extends Component {
                 data={this.props.ta98Data}
                 onSelect={this.selectExpandNode} />
             </div>
+              <LanguageSelect onChange={this.changeLanguage}/>
               <About />
             </div>
           </div>

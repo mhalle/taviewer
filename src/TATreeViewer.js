@@ -16,7 +16,7 @@ class TATreeViewer extends Component {
     }
 
     selectExpandNode(node) {
-        let keyValue = node ? [node[0]] : [];
+        let keyValue = node ? [node.id] : [];
         this.setState({
             expandedKeys: keyValue,
             autoExpandParent: true,
@@ -42,7 +42,7 @@ class TATreeViewer extends Component {
     onSelect = (keys, ev) => {
 
         if (keys && keys.length === 1 && this.props.onSelect) {
-            this.props.onSelect(this.props.data.get_node_by_id(keys[0]));
+            this.props.onSelect(this.props.data.getNodeById(keys[0]));
         }
         this.setState({ selectedKeys: keys });
 
@@ -64,21 +64,19 @@ class TATreeViewer extends Component {
     }
 }
 
-function tree_level(node_list, language="English") {
+function tree_level(node_list, language) {
     if (!node_list) {
         return;
     }
-    let sorted_list = _.sortBy(node_list, x => x[1]);
+    let sorted_list = _.sortBy(node_list, x => x.id);
     return (_.map(sorted_list, node => {
-        let title_text = language === 'English' ? node[1] : node[2];
-        let title_label = `${title_text} (${node[0]})`;
-        let is_group = node.length === 7;
+        let title_label = `${node.name[language]} (${node.id})`;
         return (
             <TreeNode
-                className={is_group ? "taviewer-group" : "taviewer-leaf"}
+                className={node.children ? "taviewer-group" : "taviewer-leaf"}
                 title={title_label}
-                key={node[0]}>
-                {tree_level(node[6], language)}
+                key={node.id}>
+                {tree_level(node.children, language)}
             </TreeNode>
         );
     }));
