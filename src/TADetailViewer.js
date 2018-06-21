@@ -9,8 +9,10 @@ const Panel = Collapse.Panel;
 
 
 const WikipediaBaseUrl = 'https://en.wikipedia.org/wiki/';
-const WikidataBaseUrl = 'https://www.wikidata.org/wiki/'
-const FMABaseUrl = 'http://xiphoid.biostr.washington.edu/fma/fmabrowser-hierarchy.html?fmaid='
+const WikidataBaseUrl = 'https://www.wikidata.org/wiki/';
+const FMABaseUrl = 'http://xiphoid.biostr.washington.edu/fma/fmabrowser-hierarchy.html?fmaid=';
+const NeurolexBaseUrl = 'http://neurolex.org/wiki/';
+const MeshBaseUrl = 'https://meshb.nlm.nih.gov/#/record/ui?ui=';
 
 class TADetailViewer extends Component {
     state = {
@@ -252,12 +254,10 @@ class TADetailViewer extends Component {
                     value={node.wikiDataId} baseUrl={WikidataBaseUrl} target="_blank" />
 
                 {this.renderWikidataProperty(wdEntityIDs,
-                    'P486', "Mesh ID",
-                    'https://meshb.nlm.nih.gov/#/record/ui?ui=')}
+                    'P486', "Mesh ID", MeshBaseUrl)}
 
                 {this.renderWikidataProperty(wdEntityIDs,
-                    'P696',
-                    "Neurolex ID", 'http://neurolex.org/wiki/')}
+                    'P696', "Neurolex ID", NeurolexBaseUrl)}
 
                 {this.renderWikidataGray(wdEntityIDs, "Gray's Anatomy", "_blank")}
 
