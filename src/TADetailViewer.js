@@ -7,7 +7,6 @@ import Lightbox from 'react-image-lightbox';
 import Gallery from 'react-photo-gallery';
 const Panel = Collapse.Panel;
 
-
 const WikipediaBaseUrl = 'https://en.wikipedia.org/wiki/';
 const WikidataBaseUrl = 'https://www.wikidata.org/wiki/';
 const FMABaseUrl = 'http://xiphoid.biostr.washington.edu/fma/fmabrowser-hierarchy.html?fmaid=';
