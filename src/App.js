@@ -9,16 +9,17 @@ import queryString from 'query-string';
 import TAComplete from './TAComplete';
 import TATreeViewer from './TATreeViewer';
 import TADetailViewer from './TADetailViewer';
+import SplitPane from 'react-split-pane';
 const Option = Select.Option;
 
 function LanguageSelect(props) {
-  return (<Select style={{width:95}} 
-            defaultValue="en"
-            {...props}>
-      <Option value="en">English</Option>
-      <Option value="la">Latin</Option>
-    </Select>
-    )
+  return (<Select style={{ width: 95 }}
+    defaultValue="en"
+    {...props}>
+    <Option value="en">English</Option>
+    <Option value="la">Latin</Option>
+  </Select>
+  )
 }
 
 function About() {
@@ -111,23 +112,21 @@ class App extends Component {
 
   render() {
     return (
-      
+
       <div className="taviewer">
         <header className="taviewer-header">
-          <div className="taviewer-topheader">
-            <div className="taviewer-title">
-              <h1>TA98 Viewer</h1>
-            </div>
-            <div className="taviewer-menubar">
+          <div className="taviewer-title">
+            <h1>TA98 Viewer</h1>
+          </div>
+          <div className="taviewer-menubar">
             <div className="taviewer-search">
               <TAComplete language={this.state.language}
                 className="taviewer-complete"
                 data={this.props.ta98Data}
                 onSelect={this.selectExpandNode} />
             </div>
-              <LanguageSelect onChange={this.changeLanguage}/>
-              <About />
-            </div>
+            <LanguageSelect onChange={this.changeLanguage} />
+            <About />
           </div>
         </header>
         <main className="taviewer-main">
