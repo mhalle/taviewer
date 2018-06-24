@@ -141,6 +141,7 @@ class App extends Component {
               openLightbox={this.openLightbox}
               closeLightbox={this.closeLightbox}
               lightboxIsOpen={this.state.lightboxIsOpen}
+              selectExpandNode={this.selectExpandNode}
               node={this.state.selectExpandNode} />
           </div>
         </main>

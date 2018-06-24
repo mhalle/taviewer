@@ -5,6 +5,7 @@ import Wikipedia from './Wikipedia';
 import Collapse from 'antd/lib/collapse';
 import Lightbox from 'react-image-lightbox';
 import Gallery from 'react-photo-gallery';
+import getAncestors from './get-ancestors';
 const Panel = Collapse.Panel;
 
 const WikipediaBaseUrl = 'https://en.wikipedia.org/wiki/';
@@ -208,6 +209,23 @@ class TADetailViewer extends Component {
         return wikipediaLinkInfo;
     }
 
+    renderBreadcrumbs(node, lang) {
+        const ancestors = getAncestors(node);
+        const renderItems = [];
+        for (var i = 1; i < ancestors.length; i++) {
+            const a = ancestors[i];
+            renderItems.push(
+                <a key={i} onClick={() => this.props.selectExpandNode(a)}>
+                    <span>{a.name[lang]}</span>
+                </a>
+            );
+        }
+        return (
+            <div className="taviewer-breadcrumbs">
+                {renderItems}
+            </div>
+        );
+    }
 
     render() {
         const { node, lightboxIsOpen, language } = this.props;
@@ -229,14 +247,7 @@ class TADetailViewer extends Component {
 
                 <h2>{node.name[language]}</h2>
 
-                <div className="taviewer-breadcrumbs">{
-                    getParentNames(node, language)
-                        .slice(1)
-                        .map(x => [
-                            <span style={{ 'white-space': 'normal' }}> / </span>,
-                            <span className="nowrap">{x}</span>
-                        ])
-                }</div>
+                {this.renderBreadcrumbs(node, language)}
 
                 <DetailRow label="TA98 ID" value={node.id} />
                 {
@@ -404,17 +415,5 @@ function getWikipediaImageInfo(titles, wikipediaCache) {
     return imageInfo;
 }
 
-function getParentNames(node, lang) {
-    const names = [];
-
-    while (true) {
-        names.push(node.name[lang]);
-        node = node.parent;
-        if (!node) {
-            break;
-        }
-    }
-    return names;
-}
 
 export default TADetailViewer;
