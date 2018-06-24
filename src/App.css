@@ -36,7 +36,7 @@ html, body root, .taviewer {
 
 .taviewer-title h1, h2 {
   font-weight: 600;
-  margin-bottom: 5px;
+  margin-bottom: 0px;
   color: #0b0b7c;
   padding-top: 1px;
 }
@@ -55,7 +55,8 @@ html, body root, .taviewer {
     padding-bottom: 8px;
     padding-top: 5px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     /* border-bottom: 1px solid #dddddd; */
   }
 
@@ -67,16 +68,18 @@ html, body root, .taviewer {
 @media (max-width: 660px) {
   .taviewer-menubar {
     padding-right: 10px;
+    flex: 1 1 600px;
   }
 
   .taviewer-search-spacer {
     display: none;
   }
   .taviewer-search {
-    flex: 1;
+    flex: 0 0  300px;
   }
   .taviewer-header {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
   .taviewer-title {
     flex: 0 0 140px;
@@ -355,6 +358,30 @@ body {
   font-size: 12px;
   line-height: 13px;
 }
+
+.taviewer-breadcrumbs span::before {
+  content: " / ";
+}
+
 .nowrap {
     white-space: nowrap;
+}
+
+.resp-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.resp-container {
+  position: relative;
+  overflow: hidden;
+  padding-top: 56.25%;
+}
+
+
+.taviewer-complete-tooltip  {
+  font-size:12px;
 }
