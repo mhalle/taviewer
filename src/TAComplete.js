@@ -21,7 +21,6 @@ class TAComplete extends Component {
   }
 
   handleSearch = (searchString) => {
-    console.log(searchString);
     let matchingNodes = [];
     let { language } = this.props;
 
