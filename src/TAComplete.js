@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import AutoComplete from 'antd/lib/auto-complete';
 import Tooltip from 'antd/lib/tooltip';
 import _ from 'lodash';
-import prefix_match from './prefix-match';
 import PrefixSearch from './prefix-search';
 import getAncestors from './get-ancestors';
 
