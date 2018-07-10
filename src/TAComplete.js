@@ -3,34 +3,69 @@ import AutoComplete from 'antd/lib/auto-complete';
 import Tooltip from 'antd/lib/tooltip';
 import _ from 'lodash';
 import prefix_match from './prefix-match';
+import PrefixSearch from './prefix-search';
 import getAncestors from './get-ancestors';
 
 const Option = AutoComplete.Option;
 
+const MaxMatches = 300;
+
+function indexNodes(nodes) {
+  const index = new PrefixSearch();
+
+  for(const n of nodes) {
+    index.indexNode(n, n.name.en, 'name_en');
+    index.indexNode(n, n.name.la, 'name_la');
+    for(const s of n.synonyms) {
+      index.indexNode(n, s, 'synonym');
+    }
+    index.indexNode(n, n.id, 'id');
+  }
+  return index;
+}
+
+function getBestMatching(nodes, lang) {
+  let matchingNodes = [];
+  const grouped = _.groupBy(nodes, n => n.node.id);
+  for(const mv of _.values(grouped)) {
+    const v = _.find(mv, i => i.term === i.node.name[lang]);
+    if(v){
+      matchingNodes.push(v);
+    }
+    else {
+      matchingNodes.push(mv[0]);
+    }
+  }
+  return _.sortBy(matchingNodes, [o => o.node.name[lang]]);
+}
 
 class TAComplete extends Component {
+  constructor() {
+    super();
+    this.prefixSearchIndex = new PrefixSearch();
+  }
+
   state = {
     searchString: '',
     matchingNodes: [],
     selectedNode: null
   }
+
   componentDidMount() {
+    const allNodes = this.props.data.getNodes();
+    this.prefixSearchIndex = indexNodes(allNodes);
+
     this.setState({
-      matchingNodes: this.props.data.getNodes()
+      matchingNodes: []
     });
   }
 
   handleSearch = (searchString) => {
-    let matchingNodes = [];
     let { language } = this.props;
 
-    _.forOwn(this.props.data.getNodes(), (v) => {
-      const lc = searchString.toLowerCase();
-      if (prefix_match(lc, v.name[language])) {
-        matchingNodes.push(v);
-      }
-    })
-    matchingNodes = _.sortBy(matchingNodes, [o => o.name[language]]);
+    const matches = this.prefixSearchIndex.getMatches(searchString);
+    const matchingNodes = getBestMatching(matches, language);
+  
     this.setState({ searchString, matchingNodes });
   }
 
@@ -67,25 +102,32 @@ class TAComplete extends Component {
     const { language } = this.props;
 
     let children;
-    if (matchingNodes.length > 200) {
+    if (matchingNodes.length > MaxMatches) {
       children = <Option
         disabled={true}
         key="TooMany">{matchingNodes.length} matches...</Option>;
     }
     else {
-      children = _.map(matchingNodes, m => {
+      children = _.map(matchingNodes, md => {
+        const m = md.node;
         const tooltipContent = this.getAncestorNames(m, language);
-        return <Option value={m.id} key={m.id}>
+        const primaryTerm = m.name[language];
+        const matchingTerm = md.term;
+
+        const printTerm = primaryTerm === matchingTerm ? 
+                        primaryTerm : `${matchingTerm} (${primaryTerm})`;
+        return <Option value={m.id} key={m}>
           {
             tooltipContent ?
               <Tooltip
+                key={m.id}
                 placement="right"
                 arrowPointAtCenter={true}
                 mouseEnterDelay={0.7}
                 overlayClassName="taviewer-complete-tooltip"
-                title={tooltipContent}>{m.name[language]} ({m.id})
+                title={tooltipContent}>{printTerm} ({m.id})
               </Tooltip> 
-              : <span>{m.name[language]} ({m.id})</span>
+              : <span>{printTerm} ({m.id})</span>
           }
         </Option>
       });
