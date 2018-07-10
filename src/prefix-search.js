@@ -7,11 +7,12 @@ class PrefixSearch {
         });
     }
 
-    indexNode(node, term, termType) {
+    indexNode(node, term, termType, lang) {
         const indexObj = {
             node,
             term,
-            termType
+            termType,
+            lang
         };
         this.index.add(indexObj);
     }

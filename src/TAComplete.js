@@ -13,12 +13,12 @@ function indexNodes(nodes) {
   const index = new PrefixSearch();
 
   for(const n of nodes) {
-    index.indexNode(n, n.name.en, 'name_en');
-    index.indexNode(n, n.name.la, 'name_la');
+    index.indexNode(n, n.name.en, 'name_en', 'en');
+    index.indexNode(n, n.name.la, 'name_la', 'la');
     for(const s of n.synonyms) {
-      index.indexNode(n, s, 'synonym');
+      index.indexNode(n, s, 'synonym', null);
     }
-    index.indexNode(n, n.id, 'id');
+    index.indexNode(n, n.id, 'id', null);
   }
   return index;
 }
@@ -74,6 +74,7 @@ class TAComplete extends Component {
 
       this.setState({
         selectedNode,
+        matchingNodes: [],
         searchString: null
       });
       if (this.props.onSelect) {
