@@ -1,4 +1,4 @@
-import _ from 'lodash';
+const _ = require('lodash');
 
 function taDataTree(dataList, parent = null) {
     if (!dataList) {
