@@ -116,7 +116,7 @@ class App extends Component {
       <div className="taviewer">
         <header className="taviewer-header">
           <div className="taviewer-title">
-            <h1>TA98 Viewer</h1>
+            <h1>TA Viewer</h1>
           </div>
           <div className="taviewer-menubar">
             <div className="taviewer-search">
