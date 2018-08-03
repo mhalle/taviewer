@@ -49,7 +49,7 @@ class App extends Component {
     });
   }
 
-  selectExpandNode = (n) => {
+  handleSelectExpandNode = (n) => {
     this.setState({
       selectExpandNode: n,
       lightboxIsOpen: false
@@ -123,7 +123,7 @@ class App extends Component {
               <TAComplete language={this.state.language}
                 className="taviewer-complete"
                 data={this.props.ta98Data}
-                onSelect={this.selectExpandNode} />
+                onSelect={this.handleSelectExpandNode} />
             </div>
             <LanguageSelect onChange={this.changeLanguage} />
             <About />
@@ -133,7 +133,7 @@ class App extends Component {
           <div className="taviewer-tree">
             <TATreeViewer language={this.state.language}
               data={this.props.ta98Data}
-              onSelect={this.selectExpandNode}
+              onSelect={this.handleSelectExpandNode}
               selectExpandNode={this.state.selectExpandNode} />
           </div>
           <div className="taviewer-detail">
@@ -141,7 +141,7 @@ class App extends Component {
               openLightbox={this.openLightbox}
               closeLightbox={this.closeLightbox}
               lightboxIsOpen={this.state.lightboxIsOpen}
-              selectExpandNode={this.selectExpandNode}
+              selectExpandNode={this.handleSelectExpandNode}
               node={this.state.selectExpandNode} />
           </div>
         </main>
