@@ -1,6 +1,6 @@
 ![TAViewer Screenshot](https://raw.githubusercontent.com/mhalle/taviewer/master/screenshot/taviewer1.png)
 
-**[http://ta98.openanatomy.org/](http://ta98.openanatomy.org/)**
+**[https://taviewer.openanatomy.org/](https://taviewer.openanatomy.org/)**
 
 TAViewer is a web-based anatomy atlas term viewer based developed by the Open Anatomy Project at the Brigham and Women's Hospital in Boston.  It uses data from Terminologia Anatomica, published in 1998, a standard for anatomical naming created by anatomists. It also cross-references TA98 terms with data from Wikipedia and Wikidata.
 
