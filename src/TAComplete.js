@@ -24,6 +24,9 @@ function indexNodes(nodes) {
 }
 
 function getBestMatching(nodes, lang) {
+  // terms might be matched by multiple phrases (e.g., synonyms).
+  // We only display one per term, so we want to make sure that the
+  // we get the primary term if possible.
   let matchingNodes = [];
   const grouped = _.groupBy(nodes, n => n.node.id);
   for(const mv of _.values(grouped)) {
@@ -38,12 +41,22 @@ function getBestMatching(nodes, lang) {
   return _.sortBy(matchingNodes, [o => o.node.name[lang]]);
 }
 
-class TAComplete extends Component {
-  constructor() {
-    super();
-    this.prefixSearchIndex = new PrefixSearch();
-  }
+function promoteExactMatches(nodes, searchString) {
+  let exactMatchingNodes = [];
+  let otherMatchingNodes = [];
 
+  for(const n of nodes) {
+    if (n.term.startsWith(searchString)) {
+      exactMatchingNodes.push(n);
+    }
+    else {
+      otherMatchingNodes.push(n);
+    }
+  }
+    return exactMatchingNodes.concat(otherMatchingNodes);
+}
+
+class TAComplete extends Component {
   state = {
     searchString: '',
     matchingNodes: [],
@@ -63,7 +76,7 @@ class TAComplete extends Component {
     let { language } = this.props;
 
     const matches = this.prefixSearchIndex.getMatches(searchString);
-    const matchingNodes = getBestMatching(matches, language);
+    const matchingNodes =  promoteExactMatches(getBestMatching(matches, language), searchString);
   
     this.setState({ searchString, matchingNodes });
   }
