@@ -69,22 +69,30 @@ html, body root, .taviewer {
   .taviewer-menubar {
     padding-right: 10px;
     flex: 1 1 600px;
+    flex-flow: row wrap;
   }
 
   .taviewer-search-spacer {
     display: none;
   }
   .taviewer-search {
-    flex: 0 0  300px;
+    flex: 1 100%;
+    order: 5;
+    padding-left: 10px;
+    padding-right: 0px;
+    padding-top: 5px;
   }
   .taviewer-header {
     flex-direction: row;
     flex-wrap: wrap;
   }
   .taviewer-title {
-    flex: 0 0 140px;
-    padding-top: 5px;
+    flex: 1 0 140px;
+    padding-top: 0px;
     padding-left: 10px;
+    align-self: flex-start;
+  
+
   }
   .taviewer-title h1 {
     font-size: 20px;
@@ -129,13 +137,16 @@ html, body root, .taviewer {
   }
   .taviewer-title {
     flex: 0 0 200px;
-    padding-top:0px;
+    margin-top:-4px;
     padding-left: 15px;
   }
 
+  .taviewer-menubar-controls {
+    padding-top: 8px;
+  }
   .taviewer-controls {
     flex: 1.5;
-    padding-top: 5px;
+    padding-top: 8px;
     padding-left: 20px;
     padding-right: 30px;
   }
@@ -324,7 +335,7 @@ body {
 .taviewer-menubar {
   display: flex;
   flex-direction: row;
-  padding-top: 4px;
+  padding-top: 8px;
   padding-bottom: 0px;
   justify-content: flex-end;
   flex: 1.5;

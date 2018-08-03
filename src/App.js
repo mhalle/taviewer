@@ -115,10 +115,10 @@ class App extends Component {
 
       <div className="taviewer">
         <header className="taviewer-header">
+          <div className="taviewer-menubar">
           <div className="taviewer-title">
             <h1>TA Viewer</h1>
           </div>
-          <div className="taviewer-menubar">
             <div className="taviewer-search">
               <TAComplete language={this.state.language}
                 className="taviewer-complete"
