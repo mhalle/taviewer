@@ -7,7 +7,7 @@ import getAncestors from './get-ancestors';
 
 const Option = AutoComplete.Option;
 
-const MaxMatches = 300;
+const MaxMatches = 400;
 
 function indexNodes(nodes) {
   const index = new PrefixSearch();
