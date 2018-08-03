@@ -45,8 +45,11 @@ function promoteExactMatches(nodes, searchString) {
   let exactMatchingNodes = [];
   let otherMatchingNodes = [];
 
+  const lowercaseExact = searchString.toLowerCase();
+  // some mobile devices want to initial cap the string
+
   for(const n of nodes) {
-    if (n.term.startsWith(searchString)) {
+    if (n.term.startsWith(lowercaseExact)) {
       exactMatchingNodes.push(n);
     }
     else {
