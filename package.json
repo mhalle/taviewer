@@ -5,6 +5,7 @@
   "dependencies": {
     "antd": "^3.1.0",
     "git-hooks": "^1.1.9",
+    "history": "^4.7.2",
     "i18next": "^11.3.3",
     "i18next-browser-languagedetector": "^2.2.0",
     "i18next-xhr-backend": "^1.5.1",
@@ -20,6 +21,7 @@
     "react-responsive": "^4.1.0",
     "react-scripts": "1.0.17",
     "react-split-pane": "^0.1.77",
+    "trie-search": "https://github.com/mhalle/trie-search.git",
     "wikidata-sdk": "^5.7.5"
   },
   "scripts": {
