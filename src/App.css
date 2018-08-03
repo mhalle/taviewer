@@ -24,11 +24,6 @@ html, body root, .taviewer {
 
   }
 
-  .taviewer-search {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-
 .taviewer-detail-image {
   max-width: 100%;
   height: auto;
@@ -137,7 +132,7 @@ html, body root, .taviewer {
   }
   .taviewer-title {
     flex: 0 0 200px;
-    margin-top:-4px;
+    margin-top:-5px;
     padding-left: 15px;
   }
 
