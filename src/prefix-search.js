@@ -3,6 +3,7 @@ const TrieSearch = require('trie-search');
 class PrefixSearch {
     constructor() {
         this.index = new TrieSearch(['term'], {
+            splitOnRegEx: /[-\s]/g,
             min: 1
         });
     }
