@@ -16,6 +16,8 @@ const FMABaseUrl = 'http://xiphoid.biostr.washington.edu/fma/fmabrowser-hierarch
 const NeurolexBaseUrl = 'http://neurolex.org/wiki/';
 const MeshBaseUrl = 'https://meshb.nlm.nih.gov/#/record/ui?ui=';
 const NeuroNamesBaseUrl = 'http://braininfo.rprc.washington.edu/centraldirectory.aspx?ID=';
+const UBERONBaseUrl = 'http://purl.obolibrary.org/obo/UBERON_';
+const UMLSBaseUrl = 'https://ncim-stage.nci.nih.gov/ncimbrowser/ConceptReport.jsp?dictionary=NCI%20Metathesaurus&code=';
 
 class TADetailViewer extends Component {
     state = {
@@ -276,6 +278,12 @@ class TADetailViewer extends Component {
 
                 {this.renderWikidataProperty(wdEntityIDs,
                     'P4394', "NeuroNames ID", NeuroNamesBaseUrl)}
+
+                {this.renderWikidataProperty(wdEntityIDs,
+                    'P1554', "UBERON ID", UBERONBaseUrl)}
+
+                {this.renderWikidataProperty(wdEntityIDs,
+                    'P2892', "UMLS CUI", UMLSBaseUrl)}
 
                 {this.renderWikidataGray(wdEntityIDs, "Gray's Anatomy", "_blank")}
 
