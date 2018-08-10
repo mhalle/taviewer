@@ -6,6 +6,8 @@ import Collapse from 'antd/lib/collapse';
 import Lightbox from 'react-image-lightbox';
 import Gallery from 'react-photo-gallery';
 import getAncestors from './get-ancestors';
+import { translate, Trans } from 'react-i18next';
+
 const Panel = Collapse.Panel;
 
 const WikipediaBaseUrl = 'https://en.wikipedia.org/wiki/';
@@ -13,6 +15,7 @@ const WikidataBaseUrl = 'https://www.wikidata.org/wiki/';
 const FMABaseUrl = 'http://xiphoid.biostr.washington.edu/fma/fmabrowser-hierarchy.html?fmaid=';
 const NeurolexBaseUrl = 'http://neurolex.org/wiki/';
 const MeshBaseUrl = 'https://meshb.nlm.nih.gov/#/record/ui?ui=';
+const NeuroNamesBaseUrl = 'http://braininfo.rprc.washington.edu/centraldirectory.aspx?ID=';
 
 class TADetailViewer extends Component {
     state = {
@@ -228,6 +231,8 @@ class TADetailViewer extends Component {
     }
 
     render() {
+        const { t, i18n } = this.props;
+
         const { node, lightboxIsOpen, language } = this.props;
         const { wikipediaCache } = this.state;
         if (!node) {
@@ -271,6 +276,9 @@ class TADetailViewer extends Component {
 
                 {this.renderWikidataProperty(wdEntityIDs,
                     'P696', "Neurolex ID", NeurolexBaseUrl)}
+
+                {this.renderWikidataProperty(wdEntityIDs,
+                    'P4394', "NeuroNames ID", NeuroNamesBaseUrl)}
 
                 {this.renderWikidataGray(wdEntityIDs, "Gray's Anatomy", "_blank")}
 
