@@ -275,9 +275,6 @@ class TADetailViewer extends Component {
                     'P486', "Mesh ID", MeshBaseUrl)}
 
                 {this.renderWikidataProperty(wdEntityIDs,
-                    'P696', "Neurolex ID", NeurolexBaseUrl)}
-
-                {this.renderWikidataProperty(wdEntityIDs,
                     'P4394', "NeuroNames ID", NeuroNamesBaseUrl)}
 
                 {this.renderWikidataGray(wdEntityIDs, "Gray's Anatomy", "_blank")}
