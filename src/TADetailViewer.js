@@ -13,7 +13,6 @@ const Panel = Collapse.Panel;
 const WikipediaBaseUrl = 'https://en.wikipedia.org/wiki/';
 const WikidataBaseUrl = 'https://www.wikidata.org/wiki/';
 const FMABaseUrl = 'http://xiphoid.biostr.washington.edu/fma/fmabrowser-hierarchy.html?fmaid=';
-const NeurolexBaseUrl = 'http://neurolex.org/wiki/';
 const MeshBaseUrl = 'https://meshb.nlm.nih.gov/#/record/ui?ui=';
 const NeuroNamesBaseUrl = 'http://braininfo.rprc.washington.edu/centraldirectory.aspx?ID=';
 const UBERONBaseUrl = 'http://purl.obolibrary.org/obo/UBERON_';
