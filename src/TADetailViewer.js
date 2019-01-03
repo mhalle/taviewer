@@ -257,12 +257,12 @@ class TADetailViewer extends Component {
 
                 <DetailRow label="TA98 ID" value={node.id} />
                 {
-                    language !== 'en' ? 
-                        <DetailRow label="English name" value={node.name['en']} /> : null
-                }
-                {
                     language !== 'la' ? 
                         <DetailRow label="Latin name" value={node.name['la']} /> : null
+                }
+                {
+                    language !== 'en' ? 
+                        <DetailRow label="English name" value={node.name['en']} /> : null
                 }
                 <DetailRow label="Synonyms" value={node.synonyms} />
                 {node.fmaId !== null ? <DetailLinks label="FMA ID"

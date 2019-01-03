@@ -4,7 +4,7 @@ class PrefixSearch {
     constructor() {
         this.index = new TrieSearch(['term'], {
             splitOnRegEx: /[-\s]/g,
-            min: 1
+            min: 2
         });
     }
 
