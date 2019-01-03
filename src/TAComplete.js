@@ -15,6 +15,8 @@ function indexNodes(nodes) {
   for(const n of nodes) {
     index.indexNode(n, n.name.en, 'name_en', 'en');
     index.indexNode(n, n.name.la, 'name_la', 'la');
+    index.indexNode(n, n.name.es, 'name_es', 'es');
+
     for(const s of n.synonyms) {
       index.indexNode(n, s, 'synonym', null);
     }

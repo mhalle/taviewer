@@ -5,18 +5,23 @@ function taDataTree(dataList, parent = null) {
         return [];
     }
     return _.map(dataList, (d) => {
+        let terms = _.mapValues(d['t'], t => _.castArray(t));
+        let preferredTerms = {};
+        let synonyms = [];
+        for (let lang of _.keys(terms)) {
+            preferredTerms[lang] = terms[lang][0];
+            synonyms = synonyms.concat(terms[lang].slice(1));
+        }
+
         let node = {
-            id: d[0],
-            name: {
-                en: d[1],
-                la: d[2]
-            },
-            synonyms: d[3],
-            fmaId: d[4],
-            wikiDataId: d[5],
+            id: d['i'],
+            name: preferredTerms,
+            synonyms,
+            fmaId: d['f'],
+            wikiDataId: _.castArray(d['w']),
             parent
         };
-        node.children = taDataTree(_.get(d, [6], []), node);
+        node.children = taDataTree(d['c'], node);
         return node;
     });
 }
@@ -36,7 +41,7 @@ function indexTree(node_list, index) {
 
 class NodeIndex {
     constructor(treeData) {
-        this.tree = taDataTree(treeData);
+        this.tree = taDataTree(treeData['c']);
         this.index = indexTree(this.tree);
     }
 

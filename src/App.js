@@ -13,11 +13,12 @@ import SplitPane from 'react-split-pane';
 const Option = Select.Option;
 
 function LanguageSelect(props) {
-  return (<Select style={{ width: 95 }}
+  return (<Select 
     defaultValue="en"
     {...props}>
     <Option value="en">English</Option>
     <Option value="la">Latin</Option>
+    <Option value="es">Spanish</Option>
   </Select>
   )
 }
