@@ -216,17 +216,19 @@ class TADetailViewer extends Component {
     renderBreadcrumbs(node, lang) {
         const ancestors = getAncestors(node);
         const renderItems = [];
-        for (var i = 1; i < ancestors.length; i++) {
+        for (var i = 0; i < ancestors.length; i++) {
             const a = ancestors[i];
+            // render this way, rather than using CSS, so that the user can 
+            // select the entire path line
             renderItems.push(
                 <a key={i} onClick={() => this.props.selectExpandNode(a)}>
-                    <span>{a.name[lang]}</span>
+                    <span><span class="separator">/</span>{a.name[lang]}</span>
                 </a>
             );
         }
         return (
             <div className="taviewer-breadcrumbs">
-                {renderItems}
+                {_.reverse(renderItems)}
             </div>
         );
     }
@@ -252,8 +254,8 @@ class TADetailViewer extends Component {
                 <Wikipedia wikiTitles={wikipediaTitles} onValue={this.updateWikipediaCache} />
 
                 <h2>{node.name[language]}</h2>
-
                 {this.renderBreadcrumbs(node, language)}
+
 
                 <DetailRow label="TA98 ID" value={node.id} />
                 {

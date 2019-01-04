@@ -365,9 +365,9 @@ body {
   font-size: 12px;
   line-height: 13px;
 }
-
-.taviewer-breadcrumbs span::before {
-  content: " / ";
+.taviewer-breadcrumbs .separator {
+  padding-left: 0.25em;
+  padding-right: 0.25em;
 }
 
 .nowrap {
