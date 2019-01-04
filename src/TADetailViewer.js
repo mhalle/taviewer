@@ -194,17 +194,21 @@ class TADetailViewer extends Component {
         return _.compact(markupList);
     }
 
-    getWikidataWikipediaUrls(ids) {
+    getWikidataWikipediaUrls(ids, lang) {
         if (!ids || ids.length === 0) {
             return null;
+        }
+        if (!lang) {
+            lang = 'en';
         }
         const validEntities = _.compact(_.map(ids, id => this.state.wikidataCache[id]));
         if (validEntities.length === 0) {
             return null;
         }
         let wikipediaLinkInfo = [];
+        let langSite = lang + 'wiki';
         for (let entity of validEntities) {
-            const siteField = _.get(entity, ['sitelinks', 'enwiki'], null);
+            const siteField = _.get(entity, ['sitelinks', langSite], null);
             if (siteField) {
                 const siteUrl = wikidata.getSitelinkUrl(siteField);
                 wikipediaLinkInfo.push([siteField.title, siteUrl]);
@@ -245,7 +249,11 @@ class TADetailViewer extends Component {
 
         const languageCount = this.getWikidataLanguageCount(wdEntityIDs);
         const siteCount = this.getWikipediaArticleCount(wdEntityIDs);
-        const wikipediaTitles = _.map(this.getWikidataWikipediaUrls(wdEntityIDs), 0);
+        const wikipediaTitles = this.getWikidataWikipediaUrls(wdEntityIDs);
+        let langWikipediaTitles = null;
+        if (language != 'en' && language != 'la') {
+            langWikipediaTitles = this.getWikidataWikipediaUrls(wdEntityIDs, language);
+        }
         const imageInfo = getWikipediaImageInfo(wikipediaTitles, wikipediaCache);
 
         return (
@@ -269,9 +277,18 @@ class TADetailViewer extends Component {
                 <DetailRow label="Synonyms" value={node.synonyms} />
                 {node.fmaId !== null ? <DetailLinks label="FMA ID"
                     value={[node.fmaId]} baseUrl={FMABaseUrl} target="_blank" /> : null}
+
+                {
+                langWikipediaTitles ? 
+                        <DetailLinks label={`Wikipedia (${language})`} 
+                                     value={langWikipediaTitles} 
+                                     target="_blank" /> : null
+                }
+                
                 <DetailLinks label="Wikipedia"
                     value={wikipediaTitles} baseUrl={WikipediaBaseUrl} target="_blank" />
-                <DetailLinks label="Wikidata"
+
+                <DetailLinksBase label="Wikidata"
                     value={node.wikiDataId} baseUrl={WikidataBaseUrl} target="_blank" />
 
                 {this.renderWikidataProperty(wdEntityIDs,
@@ -322,7 +339,7 @@ class TADetailViewer extends Component {
 }
 
 
-function DetailLinks(props) {
+function DetailLinksBase(props) {
     const { label, baseUrl, value, target } = props;
 
     if (value === null || value.length === 0) {
@@ -335,6 +352,24 @@ function DetailLinks(props) {
                 {value.map((x, i) => {
                     const href = `${baseUrl}${encodeURIComponent(x)}`;
                     return <div key={i}><a href={href} target={target}>{x}</a></div>;
+                })}
+            </div>
+        </div>
+    )
+}
+
+function DetailLinks(props) {
+    const { label, value, target } = props;
+
+    if (value === null || value.length === 0) {
+        return null;
+    }
+    return (
+        <div className="taviewer-detail-row">
+            <div className="taviewer-detail-key">{label}:</div>
+            <div className="taviewer-detail-value">
+                {value.map((x, i) => {
+                    return <div key={i}><a href={x[1]} target={target}>{x[0]}</a></div>;
                 })}
             </div>
         </div>
