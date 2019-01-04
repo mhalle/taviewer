@@ -249,10 +249,11 @@ class TADetailViewer extends Component {
 
         const languageCount = this.getWikidataLanguageCount(wdEntityIDs);
         const siteCount = this.getWikipediaArticleCount(wdEntityIDs);
-        const wikipediaTitles = this.getWikidataWikipediaUrls(wdEntityIDs);
-        let langWikipediaTitles = null;
+        const wikipediaPageInfo = this.getWikidataWikipediaUrls(wdEntityIDs);
+        const wikipediaTitles = _.map(wikipediaPageInfo, 0);
+        let langWikipediaPageInfo = null;
         if (language != 'en' && language != 'la') {
-            langWikipediaTitles = this.getWikidataWikipediaUrls(wdEntityIDs, language);
+            langWikipediaPageInfo = this.getWikidataWikipediaUrls(wdEntityIDs, language);
         }
         const imageInfo = getWikipediaImageInfo(wikipediaTitles, wikipediaCache);
 
@@ -277,17 +278,19 @@ class TADetailViewer extends Component {
                 <DetailRow label="Synonyms" value={node.synonyms} />
 
                 {
-                langWikipediaTitles ? 
+                langWikipediaPageInfo ? 
                         <DetailLinks label={`Wikipedia (${language})`} 
-                                     value={langWikipediaTitles} 
+                                     value={langWikipediaPageInfo} 
                                      target="_blank" /> : null
                 }
 
                 <DetailLinks label="Wikipedia"
-                    value={wikipediaTitles} baseUrl={WikipediaBaseUrl} target="_blank" />
+                    value={wikipediaPageInfo} target="_blank" />
 
                 <DetailLinksBase label="Wikidata"
                     value={node.wikiDataId} baseUrl={WikidataBaseUrl} target="_blank" />
+
+                {this.renderWikidataGray(wdEntityIDs, "Gray's Anatomy", "_blank")}
 
                 {node.fmaId !== null ? <DetailLinksBase label="FMA ID"
                     value={[node.fmaId]} baseUrl={FMABaseUrl} target="_blank" /> : null}
@@ -304,7 +307,6 @@ class TADetailViewer extends Component {
                 {this.renderWikidataProperty(wdEntityIDs,
                     'P2892', "UMLS CUI", UMLSBaseUrl)}
 
-                {this.renderWikidataGray(wdEntityIDs, "Gray's Anatomy", "_blank")}
 
                 <Collapse bordered={false}>
                     {imageInfo.length > 0 ?
