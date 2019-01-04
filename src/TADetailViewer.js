@@ -275,7 +275,7 @@ class TADetailViewer extends Component {
                         <DetailRow label="English name" value={node.name['en']} /> : null
                 }
                 <DetailRow label="Synonyms" value={node.synonyms} />
-                {node.fmaId !== null ? <DetailLinks label="FMA ID"
+                {node.fmaId !== null ? <DetailLinksBase label="FMA ID"
                     value={[node.fmaId]} baseUrl={FMABaseUrl} target="_blank" /> : null}
 
                 {
@@ -284,7 +284,7 @@ class TADetailViewer extends Component {
                                      value={langWikipediaTitles} 
                                      target="_blank" /> : null
                 }
-                
+
                 <DetailLinks label="Wikipedia"
                     value={wikipediaTitles} baseUrl={WikipediaBaseUrl} target="_blank" />
 
