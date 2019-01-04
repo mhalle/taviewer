@@ -275,8 +275,6 @@ class TADetailViewer extends Component {
                         <DetailRow label="English name" value={node.name['en']} /> : null
                 }
                 <DetailRow label="Synonyms" value={node.synonyms} />
-                {node.fmaId !== null ? <DetailLinksBase label="FMA ID"
-                    value={[node.fmaId]} baseUrl={FMABaseUrl} target="_blank" /> : null}
 
                 {
                 langWikipediaTitles ? 
@@ -290,6 +288,9 @@ class TADetailViewer extends Component {
 
                 <DetailLinksBase label="Wikidata"
                     value={node.wikiDataId} baseUrl={WikidataBaseUrl} target="_blank" />
+
+                {node.fmaId !== null ? <DetailLinksBase label="FMA ID"
+                    value={[node.fmaId]} baseUrl={FMABaseUrl} target="_blank" /> : null}
 
                 {this.renderWikidataProperty(wdEntityIDs,
                     'P486', "Mesh ID", MeshBaseUrl)}
