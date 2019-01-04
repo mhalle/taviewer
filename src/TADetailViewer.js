@@ -222,7 +222,7 @@ class TADetailViewer extends Component {
             // select the entire path line
             renderItems.push(
                 <a key={i} onClick={() => this.props.selectExpandNode(a)}>
-                    <span><span class="separator">/</span>{a.name[lang]}</span>
+                    <span><span className="separator">/</span>{a.name[lang]}</span>
                 </a>
             );
         }
