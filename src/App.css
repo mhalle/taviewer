@@ -370,6 +370,13 @@ body {
   padding-right: 0.25em;
 }
 
+.taviewer-complete-tooltips {
+  line-height: 13px;
+}
+.taviewer-complete-tooltips span::before {
+  content: " / ";
+}
+
 .nowrap {
     white-space: nowrap;
 }

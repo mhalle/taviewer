@@ -111,7 +111,7 @@ class TAComplete extends Component {
       return null;
     }
     return (
-      <div className="taviewer-breadcrumbs">{nameElements}</div>
+      <div className="taviewer-complete-tooltips">{_.reverse(nameElements)}</div>
     );
   }
 
