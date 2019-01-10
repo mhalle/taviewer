@@ -1,4 +1,4 @@
-![TAViewer Screenshot](https://raw.githubusercontent.com/mhalle/taviewer/master/screenshot/taviewer1.png)
+![TAViewer Screenshot](https://raw.githubusercontent.com/mhalle/taviewer/master/screenshot/taviewer-screenshot-liver.png)
 
 **[https://taviewer.openanatomy.org/](https://taviewer.openanatomy.org/)**
 
@@ -15,13 +15,15 @@ Unfortunately, TA is primarily available in book form, which has limited its use
 
 I developed [TAViewer](https://github.com/mhalle/ta98viewer) to demonstrate some of the features of the TA system, in part as a substitute for the Flash-based viewer.  TAViewer uses TA codes embedded in WikiData and Wikipedia to provide images, translations, and internationalized Wikipedia access for thousands of TA terms.  
 
+TAViewer includes a beta version of the official Spanish translation of TA. It also allows searching using any term in any language included in Wikipedia.
+
 This project simply would not have been possible without the work of the IFAA and the Wikipedia volunteers who associated TA98 codes with thousands of articles.
 
 ## Licensing
 
 During my initial exploration of TA and the development of the TA viewer, I was unable to assertain the licensing or copyright restrictions on the TA data. Since that time, I have been in touch with leadership within FIPAT and we are discussing the details of the availability of this software. 
 
-Looking to the future, the FIPAT web site indicates the progress is being made on TA2, a successor to TA, as well as [Terminologia Neuroanatomica (TNA)](http://fipat.library.dal.ca/tna/), a neuroanatomy vocabulary. These new works are planned to be released under the Creative Commons Attribution-NoDerivatives 4.0 International License, with individual terms being public domain.  The release and distribution of machine-readable versions of this valuable and useful resource are still under discussion within FIPAT. 
+Looking to the future, the FIPAT web site indicates that progress is being made on TA2, a successor to TA, as well as [Terminologia Neuroanatomica (TNA)](http://fipat.library.dal.ca/tna/), a neuroanatomy vocabulary. These new works are planned to be released under the Creative Commons Attribution-NoDerivatives 4.0 International License, with individual terms being public domain.  The release and distribution of machine-readable versions of this valuable and useful resource are still under discussion within FIPAT. 
 
 I wish to thank FIPAT again for bringing this unique work to the greater medical and education community.
 
