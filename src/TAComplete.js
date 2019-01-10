@@ -4,6 +4,8 @@ import Tooltip from 'antd/lib/tooltip';
 import _ from 'lodash';
 import PrefixSearch from './prefix-search';
 import getAncestors from './get-ancestors';
+import Set from 'core-js/library/fn/set';
+import wikidataSynonymData from './wikidata-synonyms.json';
 
 const Option = AutoComplete.Option;
 
@@ -11,16 +13,35 @@ const MaxMatches = 500;
 
 function indexNodes(nodes) {
   const index = new PrefixSearch();
+  const wikidataSynonyms = wikidataSynonymData['terms'];
 
-  for(const n of nodes) {
-    index.indexNode(n, n.name.en, 'name_en', 'en');
-    index.indexNode(n, n.name.la, 'name_la', 'la');
-    index.indexNode(n, n.name.es, 'name_es', 'es');
-
-    for(const s of n.synonyms) {
-      index.indexNode(n, s, 'synonym', null);
+  for (const n of nodes) {
+    index.indexNode(n, n.name.en, 'name_en', true, 'en');
+    index.indexNode(n, n.name.la, 'name_la', true, 'la');
+    index.indexNode(n, n.name.es, 'name_es', true, 'es');
+    let terms = new Set();
+    for (const v of _.values(n.name)) {
+      terms.add(v);
     }
-    index.indexNode(n, n.id, 'id', null);
+
+    for (const s of n.synonyms) {
+      if (!terms.has(s)) {
+        index.indexNode(n, s, 'synonym', false, null);
+        terms.add(s);
+      }
+    }
+
+    const wds = wikidataSynonyms[n.id];
+    if(wds) {
+      for(const s of wds) {
+        if (!terms.has(s)) {
+          index.indexNode(n, s, 'wikidata_synonym', false, null);
+          terms.add(s);
+        }
+      }
+    }
+
+    index.indexNode(n, n.id, 'id', true, null);
   }
   return index;
 }
@@ -31,9 +52,9 @@ function getBestMatching(nodes, lang) {
   // we get the primary term if possible.
   let matchingNodes = [];
   const grouped = _.groupBy(nodes, n => n.node.id);
-  for(const mv of _.values(grouped)) {
+  for (const mv of _.values(grouped)) {
     const v = _.find(mv, i => i.term === i.node.name[lang]);
-    if(v){
+    if (v) {
       matchingNodes.push(v);
     }
     else {
@@ -44,21 +65,32 @@ function getBestMatching(nodes, lang) {
 }
 
 function promoteExactMatches(nodes, searchString) {
+  let preferredMatchingNodes = [];
   let exactMatchingNodes = [];
   let otherMatchingNodes = [];
 
+  
   const lowercaseExact = searchString.toLowerCase();
   // some mobile devices want to initial cap the string
 
-  for(const n of nodes) {
+  for (const n of nodes) {
     if (n.term.startsWith(lowercaseExact)) {
-      exactMatchingNodes.push(n);
+      if(n.pref) {
+        preferredMatchingNodes.push(n);
+      }
+      else {
+        exactMatchingNodes.push(n);
+      }
     }
     else {
       otherMatchingNodes.push(n);
     }
   }
-    return exactMatchingNodes.concat(otherMatchingNodes);
+  preferredMatchingNodes = _.sortBy(preferredMatchingNodes, o => o.term.length);
+  exactMatchingNodes = _.sortBy(exactMatchingNodes, o => o.term.length);
+  otherMatchingNodes = _.sortBy(otherMatchingNodes, o => o.term.length);
+
+  return preferredMatchingNodes.concat(exactMatchingNodes, otherMatchingNodes);
 }
 
 class TAComplete extends Component {
@@ -81,8 +113,8 @@ class TAComplete extends Component {
     let { language } = this.props;
 
     const matches = this.prefixSearchIndex.getMatches(searchString);
-    const matchingNodes =  promoteExactMatches(getBestMatching(matches, language), searchString);
-  
+    const matchingNodes = promoteExactMatches(getBestMatching(matches, language), searchString);
+
     this.setState({ searchString, matchingNodes });
   }
 
@@ -132,8 +164,8 @@ class TAComplete extends Component {
         const primaryTerm = m.name[language];
         const matchingTerm = md.term;
 
-        const printTerm = primaryTerm === matchingTerm ? 
-                        primaryTerm : `${matchingTerm} (${primaryTerm})`;
+        const printTerm = primaryTerm === matchingTerm ?
+          primaryTerm : `${matchingTerm} (${primaryTerm})`;
         return <Option value={m.id} key={m}>
           {
             tooltipContent ?
@@ -144,7 +176,7 @@ class TAComplete extends Component {
                 mouseEnterDelay={0.7}
                 overlayClassName="taviewer-complete-tooltip"
                 title={tooltipContent}>{printTerm} ({m.id})
-              </Tooltip> 
+              </Tooltip>
               : <span>{printTerm} ({m.id})</span>
           }
         </Option>

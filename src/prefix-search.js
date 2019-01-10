@@ -8,11 +8,12 @@ class PrefixSearch {
         });
     }
 
-    indexNode(node, term, termType, lang) {
+    indexNode(node, term, termType, pref, lang) {
         const indexObj = {
             node,
             term,
             termType,
+            pref,
             lang
         };
         this.index.add(indexObj);
