@@ -374,7 +374,7 @@ body {
   line-height: 13px;
 }
 .taviewer-complete-tooltips span::before {
-  content: " / ";
+  content: " \\ ";
 }
 
 .nowrap {
