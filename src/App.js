@@ -9,6 +9,7 @@ import queryString from 'query-string';
 import TAComplete from './TAComplete';
 import TATreeViewer from './TATreeViewer';
 import TADetailViewer from './TADetailViewer';
+import _ from 'lodash';
 import SplitPane from 'react-split-pane';
 const Option = Select.Option;
 
@@ -22,6 +23,9 @@ function LanguageSelect(props) {
   </Select>
   )
 }
+
+const supportedLanguages = ['en', 'la', 'es'];
+const defaultLanguage = 'en';
 
 function About() {
   return (<Button
@@ -39,7 +43,7 @@ class App extends Component {
     selectExpandNode: null,
     lightboxIsOpen: false,
     currentImage: 0,
-    language: 'en'
+    language: defaultLanguage
   };
 
   constructor() {
@@ -55,14 +59,24 @@ class App extends Component {
       selectExpandNode: n,
       lightboxIsOpen: false
     });
-    this.pushHistory(n);
+    this.pushHistory(n, this.state.language);
   }
 
-  pushHistory = (n, lightboxOn) => {
-    const uri = n ? `/?id=${n.id}` : '/';
-    const historyState = lightboxOn ? { lb: 1 } : undefined;
+  pushHistory = (n, lang) => {
+    let uri = '/';
+    let q = [];
 
-    this.history.push(uri, historyState);
+    if(n){
+      q=[`id=${n.id}`];
+  }
+    if(lang !== defaultLanguage){
+      q.push(`lang=${lang}`);
+    }
+    if(q.length){
+      uri = '/?' + q.join('&');
+    }
+
+    this.history.push(uri);
   }
 
   openLightbox = () => {
@@ -88,9 +102,18 @@ class App extends Component {
       if (query.id && this.props.ta98Data.getNodeById(query.id)) {
         selectedNode = this.props.ta98Data.getNodeById(query.id);
       }
+
+      let language;
+      if (query.lang && _.find(supportedLanguages, query.lang) !== -1) {
+        language = query.lang;
+      }
+      else {
+        language = defaultLanguage;
+      }
       this.setState({
         lightboxIsOpen: false,
-        selectExpandNode: selectedNode
+        selectExpandNode: selectedNode,
+        language
       });
     }
   }
@@ -108,10 +131,13 @@ class App extends Component {
   changeLanguage = (language) => {
     this.setState({
       language
-    })
+    });
+    this.pushHistory(this.state.selectExpandNode, language);
   }
 
   render() {
+    const { t, i18n } = this.props;
+
     return (
 
       <div className="taviewer">
@@ -126,7 +152,7 @@ class App extends Component {
                 data={this.props.ta98Data}
                 onSelect={this.handleSelectExpandNode} />
             </div>
-            <LanguageSelect onChange={this.changeLanguage} />
+            <LanguageSelect onChange={this.changeLanguage} value={this.state.language}/>
             <About />
           </div>
         </header>
