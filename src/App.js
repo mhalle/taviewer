@@ -17,8 +17,8 @@ function LanguageSelect(props) {
   return (<Select style={{ width: 125 }}
     defaultValue="en"
     {...props}>
-    <Option value="en">English</Option>
     <Option value="la">Latin</Option>
+    <Option value="en">English</Option>
     <Option value="es">Spanish (beta)</Option>
   </Select>
   )
@@ -58,6 +58,10 @@ class App extends Component {
   }
     if(_.find(supportedLanguages, userLanguage) !== -1) {
       this.state.language = defaultLanguage = userLanguage;
+    }
+    else {
+      // if user language isn't supported, default is Latin
+      this.state.language = defaultLanguage = 'la';
     }
   }
 
