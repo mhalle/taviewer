@@ -25,7 +25,7 @@ function LanguageSelect(props) {
 }
 
 const supportedLanguages = ['en', 'la', 'es'];
-const defaultLanguage = 'en';
+let defaultLanguage = 'en';
 
 function About() {
   return (<Button
@@ -52,6 +52,13 @@ class App extends Component {
     this.unlisten = this.history.listen((location, action) => {
       this.handleHistory(location, action);
     });
+    let userLanguage = navigator.language || navigator.userLanguage;
+    if (userLanguage) {
+      userLanguage = userLanguage.toLowerCase().slice(0, 2);
+  }
+    if(_.find(supportedLanguages, userLanguage) !== -1) {
+      this.state.language = defaultLanguage = userLanguage;
+    }
   }
 
   handleSelectExpandNode = (n) => {
@@ -90,7 +97,7 @@ class App extends Component {
   handleHistory = (location, action) => {
     if (action === 'POP' || action === 'X-INIT') {
       if (this.state.lightboxIsOpen) {
-        this.pushHistory(this.state.selectExpandNode);
+        this.pushHistory(this.state.selectExpandNode, this.state.language);
         this.setState({
           lightboxIsOpen: false
         });
