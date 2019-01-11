@@ -22,10 +22,12 @@
     "react-responsive": "^4.1.0",
     "react-scripts": "1.0.17",
     "react-split-pane": "^0.1.77",
+    "source-map-explorer": "^1.6.0",
     "trie-search": "https://github.com/mhalle/trie-search.git",
     "wikidata-sdk": "^5.7.5"
   },
   "scripts": {
+    "analyze": "source-map-explorer build/static/js/main.*",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
