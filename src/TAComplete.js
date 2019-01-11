@@ -9,7 +9,7 @@ import wikidataSynonymData from './wikidata-synonyms.json';
 
 const Option = AutoComplete.Option;
 
-const MaxMatches = 500;
+const MaxMatches = 700;
 
 function indexNodes(nodes) {
   const index = new PrefixSearch();
