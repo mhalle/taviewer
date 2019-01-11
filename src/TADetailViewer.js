@@ -251,7 +251,7 @@ class TADetailViewer extends Component {
         const wikipediaPageInfo = this.getWikidataWikipediaUrls(wdEntityIDs);
         const wikipediaTitles = _.map(wikipediaPageInfo, 0);
         let langWikipediaPageInfo = null;
-        if (language != 'en' && language != 'la') {
+        if (language !== 'en' && language !== 'la') {
             langWikipediaPageInfo = this.getWikidataWikipediaUrls(wdEntityIDs, language);
         }
         const imageInfo = getWikipediaImageInfo(wikipediaTitles, wikipediaCache);
