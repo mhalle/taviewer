@@ -173,8 +173,8 @@ class TAComplete extends Component {
       else if (matchingNodes[0].length < MaxMatches) {
         listedMatches = matchingNodes[0];
         numExtra = matchingNodes[1].length + matchingNodes[2].length;
-    }
-    else {
+      }
+      else {
         listedMatches = [];
         numExtra = matchingNodes[0].length + matchingNodes[1].length + matchingNodes[2].length;
       }
@@ -208,17 +208,17 @@ class TAComplete extends Component {
     });
     return (
       <div className="taviewer-complete" >
-      <AutoComplete
-        showSearch
-        allowClear
-        optionLabelProp="value"
-        ref="autocomplete"
-        value={this.state.searchString}
-        onSelect={this.onSelect}
-        onSearch={this.handleSearch}
-        placeholder="search (e.g. thalamus)">
+        <AutoComplete
+          showSearch
+          allowClear
+          optionLabelProp="value"
+          ref="autocomplete"
+          value={this.state.searchString}
+          onSelect={this.onSelect}
+          onSearch={this.handleSearch}
+          placeholder="search (e.g. thalamus)">
           {children.concat(extraChild)}
-      </AutoComplete>
+        </AutoComplete>
       </div>
     )
   }
