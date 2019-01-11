@@ -9,7 +9,7 @@ import wikidataSynonymData from './wikidata-synonyms.json';
 
 const Option = AutoComplete.Option;
 
-const MaxMatches = 700;
+const MaxMatches = 500;
 
 function indexNodes(nodes) {
   const index = new PrefixSearch();
@@ -32,8 +32,8 @@ function indexNodes(nodes) {
     }
 
     const wds = wikidataSynonyms[n.id];
-    if(wds) {
-      for(const s of wds) {
+    if (wds) {
+      for (const s of wds) {
         if (!terms.has(s)) {
           index.indexNode(n, s, 'wikidata_synonym', false, null);
           terms.add(s);
@@ -69,13 +69,12 @@ function promoteExactMatches(nodes, searchString) {
   let exactMatchingNodes = [];
   let otherMatchingNodes = [];
 
-  
   const lowercaseExact = searchString.toLowerCase();
   // some mobile devices want to initial cap the string
 
   for (const n of nodes) {
     if (n.term.startsWith(lowercaseExact)) {
-      if(n.pref) {
+      if (n.pref) {
         preferredMatchingNodes.push(n);
       }
       else {
@@ -90,13 +89,13 @@ function promoteExactMatches(nodes, searchString) {
   exactMatchingNodes = _.sortBy(exactMatchingNodes, o => o.term.length);
   otherMatchingNodes = _.sortBy(otherMatchingNodes, o => o.term.length);
 
-  return preferredMatchingNodes.concat(exactMatchingNodes, otherMatchingNodes);
+  return [preferredMatchingNodes.concat(exactMatchingNodes), otherMatchingNodes];
 }
 
 class TAComplete extends Component {
   state = {
     searchString: '',
-    matchingNodes: [],
+    matchingNodes: [[],[]],
     selectedNode: null
   }
 
@@ -105,7 +104,7 @@ class TAComplete extends Component {
     this.prefixSearchIndex = indexNodes(allNodes);
 
     this.setState({
-      matchingNodes: []
+      matchingNodes: [[],[]]
     });
   }
 
@@ -124,7 +123,7 @@ class TAComplete extends Component {
 
       this.setState({
         selectedNode,
-        matchingNodes: [],
+        matchingNodes: [[],[]],
         searchString: null
       });
       if (this.props.onSelect) {
@@ -151,50 +150,62 @@ class TAComplete extends Component {
     const { matchingNodes } = this.state;
     const { language } = this.props;
 
+    const preferredMatches = matchingNodes[0];
+    const additionalMatches = matchingNodes[1];
+
     let children;
-    if (matchingNodes.length > MaxMatches) {
-      children = <Option
+    let listedMatches;
+    let extraChildren;
+
+    if (preferredMatches.length + additionalMatches.length > MaxMatches) {
+      // do only preferredMatches, plus a reference to others
+      listedMatches = preferredMatches;
+
+      extraChildren = [<Option
         disabled={true}
-        key="TooMany">{matchingNodes.length} matches...</Option>;
+        key="TooMany">{additionalMatches.length} more matches...</Option>];
     }
     else {
-      children = _.map(matchingNodes, md => {
-        const m = md.node;
-        const tooltipContent = this.getAncestorNames(m, language);
-        const primaryTerm = m.name[language];
-        const matchingTerm = md.term;
-
-        const printTerm = primaryTerm === matchingTerm ?
-          primaryTerm : `${matchingTerm} (${primaryTerm})`;
-        return <Option value={m.id} key={m}>
-          {
-            tooltipContent ?
-              <Tooltip
-                key={m.id}
-                placement="right"
-                arrowPointAtCenter={true}
-                mouseEnterDelay={0.7}
-                overlayClassName="taviewer-complete-tooltip"
-                title={tooltipContent}>{printTerm} ({m.id})
-              </Tooltip>
-              : <span>{printTerm} ({m.id})</span>
-          }
-        </Option>
-      });
+      listedMatches = preferredMatches.concat(additionalMatches);
+      extraChildren = [];
     }
-    return (
-      <div className="taviewer-complete">
-        <AutoComplete
-          showSearch
-          allowClear
-          optionLabelProp="value"
-          ref="autocomplete"
-          value={this.state.searchString}
-          onSelect={this.onSelect}
-          onSearch={this.handleSearch}
-          placeholder="search (e.g. thalamus)">
-          {children}
-        </AutoComplete>
+
+    children = _.map(listedMatches, md => {
+      const m = md.node;
+      const tooltipContent = this.getAncestorNames(m, language);
+      const primaryTerm = m.name[language];
+      const matchingTerm = md.term;
+
+      const printTerm = primaryTerm === matchingTerm ?
+        primaryTerm : `${matchingTerm} (${primaryTerm})`;
+      return <Option value={m.id} key={m}>
+        {
+          tooltipContent ?
+            <Tooltip
+              key={m.id}
+              placement="right"
+              arrowPointAtCenter={true}
+              mouseEnterDelay={0.7}
+              overlayClassName="taviewer-complete-tooltip"
+              title={tooltipContent}>{printTerm} ({m.id})
+              </Tooltip>
+            : <span>{printTerm} ({m.id})</span>
+        }
+      </Option>
+    });
+  return(
+      <div className = "taviewer-complete" >
+      <AutoComplete
+        showSearch
+        allowClear
+        optionLabelProp="value"
+        ref="autocomplete"
+        value={this.state.searchString}
+        onSelect={this.onSelect}
+        onSearch={this.handleSearch}
+        placeholder="search (e.g. thalamus)">
+        {children.concat(extraChildren)}
+      </AutoComplete>
       </div>
     )
   }
