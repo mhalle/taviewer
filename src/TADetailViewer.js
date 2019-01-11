@@ -462,10 +462,9 @@ function getWikipediaImageInfo(titles, wikipediaCache) {
     for (let wikiTitle of titles) {
         const wikiInfo = _.get(wikipediaCache, wikiTitle, null);
         if (wikiInfo && wikiInfo.imageInfo) {
-            imageInfo = _.union(imageInfo, wikiInfo.imageInfo);
+            imageInfo = _.unionBy(imageInfo, wikiInfo.imageInfo, 'url');
         }
     }
-
     return imageInfo;
 }
 
