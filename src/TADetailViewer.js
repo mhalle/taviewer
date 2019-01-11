@@ -10,7 +10,6 @@ import { translate, Trans } from 'react-i18next';
 
 const Panel = Collapse.Panel;
 
-const WikipediaBaseUrl = 'https://en.wikipedia.org/wiki/';
 const WikidataBaseUrl = 'https://www.wikidata.org/wiki/';
 const FMABaseUrl = 'http://xiphoid.biostr.washington.edu/fma/fmabrowser-hierarchy.html?fmaid=';
 const MeshBaseUrl = 'https://meshb.nlm.nih.gov/#/record/ui?ui=';
