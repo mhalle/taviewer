@@ -56,7 +56,7 @@ class App extends Component {
     if (userLanguage) {
       userLanguage = userLanguage.toLowerCase().slice(0, 2);
   }
-    if(_.find(supportedLanguages, userLanguage) !== -1) {
+    if(_.includes(supportedLanguages, userLanguage)) {
       this.state.language = defaultLanguage = userLanguage;
     }
     else {
@@ -80,7 +80,7 @@ class App extends Component {
     if(n){
       q=[`id=${n.id}`];
   }
-    if(lang !== defaultLanguage){
+    if(lang !== defaultLanguage && _.includes(supportedLanguages, lang)){
       q.push(`lang=${lang}`);
     }
     if(q.length){
@@ -115,7 +115,7 @@ class App extends Component {
       }
 
       let language;
-      if (query.lang && _.find(supportedLanguages, query.lang) !== -1) {
+      if (query.lang && _.includes(supportedLanguages, query.lang)) {
         language = query.lang;
       }
       else {
