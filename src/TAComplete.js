@@ -89,13 +89,13 @@ function promoteExactMatches(nodes, searchString) {
   exactMatchingNodes = _.sortBy(exactMatchingNodes, o => o.term.length);
   otherMatchingNodes = _.sortBy(otherMatchingNodes, o => o.term.length);
 
-  return [preferredMatchingNodes.concat(exactMatchingNodes), otherMatchingNodes];
+  return [preferredMatchingNodes, exactMatchingNodes, otherMatchingNodes];
 }
 
 class TAComplete extends Component {
   state = {
     searchString: '',
-    matchingNodes: [[],[]],
+    matchingNodes: null,
     selectedNode: null
   }
 
@@ -104,7 +104,7 @@ class TAComplete extends Component {
     this.prefixSearchIndex = indexNodes(allNodes);
 
     this.setState({
-      matchingNodes: [[],[]]
+      matchingNodes: null
     });
   }
 
@@ -123,7 +123,7 @@ class TAComplete extends Component {
 
       this.setState({
         selectedNode,
-        matchingNodes: [[],[]],
+        matchingNodes: null,
         searchString: null
       });
       if (this.props.onSelect) {
@@ -147,27 +147,40 @@ class TAComplete extends Component {
   }
 
   render() {
-    const { matchingNodes } = this.state;
+    let { matchingNodes } = this.state;
     const { language } = this.props;
 
-    const preferredMatches = matchingNodes[0];
-    const additionalMatches = matchingNodes[1];
-
     let children;
-    let listedMatches;
-    let extraChildren;
+    let listedMatches, otherMatches;
+    let extraChild;
+    let numExtra;
 
-    if (preferredMatches.length + additionalMatches.length > MaxMatches) {
-      // do only preferredMatches, plus a reference to others
-      listedMatches = preferredMatches;
+    if (!matchingNodes) {
+      matchingNodes = [[], [], []]
+    }
 
-      extraChildren = [<Option
-        disabled={true}
-        key="TooMany">{additionalMatches.length} more matches...</Option>];
+    if (matchingNodes[0].length
+      + matchingNodes[1].length
+      + matchingNodes[2].length < MaxMatches) {
+      listedMatches = matchingNodes[0].concat(matchingNodes[1], matchingNodes[2]);
+      numExtra = 0;
     }
     else {
-      listedMatches = preferredMatches.concat(additionalMatches);
-      extraChildren = [];
+      if (matchingNodes[0].length + matchingNodes[1].length < MaxMatches) {
+        listedMatches = matchingNodes[0].concat(matchingNodes[1]);
+        numExtra = matchingNodes[2].length;
+      } 
+      else if (matchingNodes[0].length < MaxMatches) {
+        listedMatches = matchingNodes[0];
+        numExtra = matchingNodes[1].length + matchingNodes[2].length;
+    }
+    else {
+        listedMatches = [];
+        numExtra = matchingNodes[0].length + matchingNodes[1].length + matchingNodes[2].length;
+      }
+      extraChild = numExtra ? <Option
+        disabled={true}
+        key="TooMany">{numExtra} more matches...</Option> : null;
     }
 
     children = _.map(listedMatches, md => {
@@ -193,8 +206,8 @@ class TAComplete extends Component {
         }
       </Option>
     });
-  return(
-      <div className = "taviewer-complete" >
+    return (
+      <div className="taviewer-complete" >
       <AutoComplete
         showSearch
         allowClear
@@ -204,7 +217,7 @@ class TAComplete extends Component {
         onSelect={this.onSelect}
         onSearch={this.handleSearch}
         placeholder="search (e.g. thalamus)">
-        {children.concat(extraChildren)}
+          {children.concat(extraChild)}
       </AutoComplete>
       </div>
     )
