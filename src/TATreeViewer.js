@@ -73,7 +73,7 @@ function tree_level(node_list, language) {
         let title_label = `${node.name[language]} (${node.id})`;
         return (
             <TreeNode
-                className={node.children ? "taviewer-group" : "taviewer-leaf"}
+                className={node.children && node.children.length > 0 ? "taviewer-group" : "taviewer-leaf"}
                 title={title_label}
                 key={node.id}>
                 {tree_level(node.children, language)}
