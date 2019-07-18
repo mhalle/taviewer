@@ -6,16 +6,13 @@ import Collapse from 'antd/lib/collapse';
 import Lightbox from 'react-image-lightbox';
 import Gallery from 'react-photo-gallery';
 import getAncestors from './get-ancestors';
+import wikidataAccessors from './wikidataAccessors';
 import { translate, Trans } from 'react-i18next';
 
 const Panel = Collapse.Panel;
 
 const WikidataBaseUrl = 'https://www.wikidata.org/wiki/';
 const FMABaseUrl = 'http://xiphoid.biostr.washington.edu/fma/fmabrowser-hierarchy.html?fmaid=';
-const MeshBaseUrl = 'https://meshb.nlm.nih.gov/#/record/ui?ui=';
-const NeuroNamesBaseUrl = 'http://braininfo.rprc.washington.edu/centraldirectory.aspx?ID=';
-const UBERONBaseUrl = 'http://purl.obolibrary.org/obo/UBERON_';
-const UMLSBaseUrl = 'https://ncim-stage.nci.nih.gov/ncimbrowser/ConceptReport.jsp?dictionary=NCI%20Metathesaurus&code=';
 
 class TADetailViewer extends Component {
     state = {
@@ -90,7 +87,7 @@ class TADetailViewer extends Component {
         );
     }
 
-    renderWikidataProperty(ids, propId, propLabel, urlPrefix) {
+    renderWikidataProperty(ids, propId, propLabel, urlFunc) {
         if (!ids || ids.length === 0) {
             return null;
         }
@@ -110,9 +107,9 @@ class TADetailViewer extends Component {
             return null;
         }
         let displayValues = allClaimValues;
-        if (urlPrefix) {
+        if (urlFunc) {
             displayValues = _.map(allClaimValues, claimValue =>
-                <a href={urlPrefix + claimValue} target='_blank'>{claimValue}</a>);
+                <a href={urlFunc(claimValue)} target='_blank'>{claimValue}</a>);
         }
 
         return (<div key={propId} className="taviewer-detail-row">
@@ -294,18 +291,9 @@ class TADetailViewer extends Component {
                 {node.fmaId !== null ? <DetailLinksBase label="FMA ID"
                     value={[node.fmaId]} baseUrl={FMABaseUrl} target="_blank" /> : null}
 
-
-                {this.renderWikidataProperty(wdEntityIDs,
-                    'P486', "Mesh ID", MeshBaseUrl)}
-
-                {this.renderWikidataProperty(wdEntityIDs,
-                    'P4394', "NeuroNames ID", NeuroNamesBaseUrl)}
-
-                {this.renderWikidataProperty(wdEntityIDs,
-                    'P1554', "UBERON ID", UBERONBaseUrl)}
-
-                {this.renderWikidataProperty(wdEntityIDs,
-                    'P2892', "UMLS CUI", UMLSBaseUrl)}
+                {wikidataAccessors.map((a) => 
+                    this.renderWikidataProperty(wdEntityIDs,
+                                        a.wikidataProperty, a.label, a.url))}
 
 
                 <Collapse bordered={false}>
