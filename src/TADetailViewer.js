@@ -244,7 +244,7 @@ class TADetailViewer extends Component {
         if (!node) {
             return null;
         }
-        let wdEntityIDs = node.wikiDataId;
+        let wdEntityIDs = node.wikidataId;
 
         const languageCount = this.getWikidataLanguageCount(wdEntityIDs);
         const siteCount = this.getWikipediaArticleCount(wdEntityIDs);
@@ -287,12 +287,13 @@ class TADetailViewer extends Component {
                     value={wikipediaPageInfo} target="_blank" />
 
                 <DetailLinksBase label="Wikidata"
-                    value={node.wikiDataId} baseUrl={WikidataBaseUrl} target="_blank" />
+                    value={node.wikidataId} baseUrl={WikidataBaseUrl} target="_blank" />
 
                 {this.renderWikidataGray(wdEntityIDs, "Gray's Anatomy", "_blank")}
 
                 {node.fmaId !== null ? <DetailLinksBase label="FMA ID"
                     value={[node.fmaId]} baseUrl={FMABaseUrl} target="_blank" /> : null}
+
 
                 {this.renderWikidataProperty(wdEntityIDs,
                     'P486', "Mesh ID", MeshBaseUrl)}

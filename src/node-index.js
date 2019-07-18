@@ -18,7 +18,7 @@ function taDataTree(dataList, parent = null) {
             name: preferredTerms,
             synonyms,
             fmaId: d['f'],
-            wikiDataId: d['w'] ? _.castArray(d['w']) : null,
+            wikidataId: d['w'] ? _.castArray(d['w']) : null,
             parent
         };
         node.children = taDataTree(d['c'], node);
