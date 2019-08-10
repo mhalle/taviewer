@@ -30,5 +30,9 @@
     "(.*Pending-protection-shackle.*)",
     "(.*Wikiquote-logo.*)",
     "(.*Wikisource-logo.*)",
-    "(.*Wikipedia%27s_W.*)"
+    "(.*Wikipedia%27s_W.*)",
+    "(.*file-type-icons.*)",
+    "(.*Gnome-mime-sound.*)",
+    "(.*Wikiversity-logo.*)",
+    "(.*HROgg.ogg.*)"
 ]
