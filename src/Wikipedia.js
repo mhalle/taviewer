@@ -10,7 +10,7 @@ function filterBogusImages(imageInfo) {
     });
 }
 
-var WikipediaImageAPIUrl = 'https://en.wikipedia.org/w/api.php?generator=images&iiprop=url|size&prop=imageinfo&format=json&action=query&redirects=&origin=*';
+var WikipediaImageAPIUrl = 'https://en.wikipedia.org/w/api.php?generator=images&iiprop=url|size&prop=imageinfo&gimlimit=max&format=json&action=query&redirects=&origin=*';
 
 function getWikipediaImageinfoUrl(title, thumbwidth, thumbheight) {
     let encodedTitle = encodeURIComponent(title);
