@@ -40,7 +40,7 @@ class Wikipedia extends Component {
             return res.json();
         }).then(doc => {
             const pages = _.values(_.get(doc, ['query', 'pages'], []));
-            const imageInfo = _.map(pages, page => page.imageinfo[0]);
+            const imageInfo = _.pickBy(_.map(pages, page => page.imageinfo ? page.imageinfo[0] : null), _.identity);
             return filterBogusImages(imageInfo);
         }).then(imageInfo => {
             const wikiInfo = {
