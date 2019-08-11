@@ -4,7 +4,7 @@ import Tooltip from 'antd/lib/tooltip';
 import _ from 'lodash';
 import PrefixSearch from './prefix-search';
 import getAncestors from './get-ancestors';
-import Set from 'core-js/library/fn/set';
+import Set from 'es6-set';
 import wikidataSynonymData from './wikidata-synonyms.json';
 
 const Option = AutoComplete.Option;
@@ -151,7 +151,7 @@ class TAComplete extends Component {
     const { language } = this.props;
 
     let children;
-    let listedMatches, otherMatches;
+    let listedMatches;
     let extraChild;
     let numExtra;
 

@@ -23,5 +23,5 @@ class PrefixSearch {
         return this.index.get(prefixString);
     }
 }
-module.exports = PrefixSearch;
+export default PrefixSearch;
 

@@ -1,4 +1,4 @@
-import wdk from 'wikidata-sdk/dist/wikidata-sdk';
+import wdk from 'wikidata-sdk';
 import _ from 'lodash';
 import { Component } from 'react';
 

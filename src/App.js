@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import createHistory from 'history/createBrowserHistory';
+import { createBrowserHistory } from 'history';
+// import { translate, Trans } from 'react-i18next';
 
 import Button from 'antd/lib/button';
 import Select from 'antd/lib/select';
@@ -10,7 +11,6 @@ import TAComplete from './TAComplete';
 import TATreeViewer from './TATreeViewer';
 import TADetailViewer from './TADetailViewer';
 import _ from 'lodash';
-import SplitPane from 'react-split-pane';
 const Option = Select.Option;
 
 function LanguageSelect(props) {
@@ -48,14 +48,14 @@ class App extends Component {
 
   constructor() {
     super();
-    this.history = createHistory();
+    this.history = createBrowserHistory();
     this.unlisten = this.history.listen((location, action) => {
       this.handleHistory(location, action);
     });
     let userLanguage = navigator.language || navigator.userLanguage;
     if (userLanguage) {
       userLanguage = userLanguage.toLowerCase().slice(0, 2);
-  }
+    }
     if(_.includes(supportedLanguages, userLanguage)) {
       this.state.language = defaultLanguage = userLanguage;
     }
@@ -79,7 +79,7 @@ class App extends Component {
 
     if(n){
       q=[`id=${n.id}`];
-  }
+    }
     if(lang !== defaultLanguage && _.includes(supportedLanguages, lang)){
       q.push(`lang=${lang}`);
     }
@@ -147,10 +147,10 @@ class App extends Component {
   }
 
   render() {
-    const { t, i18n } = this.props;
+    const { i18n } = this.props;
 
     return (
-
+      
       <div className="taviewer">
         <header className="taviewer-header">
           <div className="taviewer-menubar">
@@ -189,4 +189,5 @@ class App extends Component {
 
 }
 
+//export default translate('taviewer')(App);
 export default App;

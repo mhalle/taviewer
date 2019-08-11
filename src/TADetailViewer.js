@@ -109,7 +109,7 @@ class TADetailViewer extends Component {
         let displayValues = allClaimValues;
         if (urlFunc) {
             displayValues = _.map(allClaimValues, claimValue =>
-                <a href={urlFunc(claimValue)} target='_blank'>{claimValue}</a>);
+                <a href={urlFunc(claimValue)} target='_blank'  rel='noopener noreferrer'>{claimValue}</a>);
         }
 
         return (<div key={propId} className="taviewer-detail-row">
@@ -179,7 +179,7 @@ class TADetailViewer extends Component {
                     <div key={v["site"]} className="taviewer-detail-row">
                         <div className="taviewer-detail-key-nested">{v['site'].replace('wiki', '')}:</div>
                         <div className="taviewer-detail-value">
-                            <div><a href={wikidata.getSitelinkUrl(v)} target="_blank">{v['title']}</a></div>
+                            <div><a href={wikidata.getSitelinkUrl(v)} target="_blank"  rel="noopener noreferrer">{v['title']}</a></div>
                         </div>
                     </div>
                 )
@@ -264,20 +264,20 @@ class TADetailViewer extends Component {
 
                 <DetailRow label="TA98 ID" value={node.id} />
                 {
-                    language !== 'la' ? 
+                    language !== 'la' ?
                         <DetailRow label="Latin name" value={node.name['la']} /> : null
                 }
                 {
-                    language !== 'en' ? 
+                    language !== 'en' ?
                         <DetailRow label="English name" value={node.name['en']} /> : null
                 }
                 <DetailRow label="Synonyms" value={node.synonyms} />
 
                 {
-                langWikipediaPageInfo ? 
-                        <DetailLinks label={`Wikipedia (${language})`} 
-                                     value={langWikipediaPageInfo} 
-                                     target="_blank" /> : null
+                    langWikipediaPageInfo ?
+                        <DetailLinks label={`Wikipedia (${language})`}
+                            value={langWikipediaPageInfo}
+                            target="_blank" /> : null
                 }
 
                 <DetailLinks label="Wikipedia"
@@ -295,7 +295,7 @@ class TADetailViewer extends Component {
                     this.renderWikidataProperty(wdEntityIDs,
                                         a.wikidataProperty, a.label, a.url))}
 
-
+                
                 <Collapse bordered={false}>
                     {imageInfo.length > 0 ?
                         <Panel header={"Wikipedia images (" + imageInfo.length + ")"}>
