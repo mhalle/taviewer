@@ -8,6 +8,7 @@ import Gallery from 'react-photo-gallery';
 import getAncestors from './get-ancestors';
 import wikidataAccessors from './wikidataAccessors';
 import { translate, Trans } from 'react-i18next';
+import 'react-image-lightbox/style.css';
 
 const Panel = Collapse.Panel;
 
