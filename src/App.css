@@ -291,15 +291,19 @@ body {
   background: rgb(200, 200, 200);
 }
 
-.taviewer .ant-collapse > .ant-collapse-item > .ant-collapse-header .arrow {
+/* .taviewer .ant-collapse > .ant-collapse-item > .ant-collapse-header .arrow {
   top: -11px;
   left: 0px;
+} */
+
+.taviewer .ant-collapse-header > .ant-collapse-arrow {
+  margin-left: 5px;
 }
 
 .taviewer .ant-collapse > .ant-collapse-item > .ant-collapse-header {
   padding-top: 0px;
   padding-bottom: 0px;
-/*   padding-left: 15px; */
+  margin-left: -30px;
   font-weight: bold;
   color: rgb(75, 75, 75);
 }
