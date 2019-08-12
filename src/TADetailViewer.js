@@ -402,6 +402,7 @@ class DetailGallery extends Component {
         return (
             <Gallery
                 onClick={this.props.onClick}
+                targetRowHeight={250}
                 photos={imageInfo.map(x => ({ src: x.thumburl, width: x.thumbwidth, height: x.thumbheight }))} />
         );
     }
