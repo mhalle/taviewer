@@ -378,7 +378,11 @@ body {
   border: none;
   color: #1890ff;
   background: inherit;
+  outline: transparent;
   padding: none;  /* also in code, since this gets overidden for some reason. */
+}
+.taviewer-breadcrumbs button:hover {
+  text-decoration: underline;
 }
 
 .taviewer-complete-tooltips {
