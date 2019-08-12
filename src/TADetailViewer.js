@@ -222,9 +222,9 @@ class TADetailViewer extends Component {
             // render this way, rather than using CSS, so that the user can 
             // select the entire path line
             renderItems.push(
-                <a key={i} onClick={() => this.props.selectExpandNode(a)}>
+                <button style={{'padding': '0px'}} key={i} onClick={() => this.props.selectExpandNode(a)}>
                     <span><span className="separator">/</span>{a.name[lang]}</span>
-                </a>
+                </button>
             );
         }
         return (

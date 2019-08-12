@@ -374,6 +374,13 @@ body {
   padding-right: 0.25em;
 }
 
+.taviewer-breadcrumbs button {
+  border: none;
+  color: #1890ff;
+  background: inherit;
+  padding: none;  /* also in code, since this gets overidden for some reason. */
+}
+
 .taviewer-complete-tooltips {
   line-height: 13px;
 }
