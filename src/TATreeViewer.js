@@ -24,11 +24,17 @@ class TATreeViewer extends Component {
         })
     }
 
-    componentWillReceiveProps(nextProps) {
+    /* componentWillReceiveProps(nextProps) {
         let newNode = nextProps.selectExpandNode;
 
         if (newNode !== this.props.selectExpandNode) {
             this.selectExpandNode(newNode);
+        }
+    }*/
+
+    componentDidUpdate (prevProps) {
+        if (prevProps.selectExpandNode !== this.props.selectExpandNode) {
+            this.selectExpandNode(this.props.selectExpandNode);
         }
     }
 
