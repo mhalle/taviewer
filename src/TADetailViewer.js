@@ -13,7 +13,7 @@ import 'react-image-lightbox/style.css';
 const Panel = Collapse.Panel;
 
 const WikidataBaseUrl = 'https://www.wikidata.org/wiki/';
-const FMABaseUrl = 'http://xiphoid.biostr.washington.edu/fma/fmabrowser-hierarchy.html?fmaid=';
+const FMABaseUrl = 'http://purl.org/sig/ont/fma/fma';
 
 class TADetailViewer extends Component {
     state = {
